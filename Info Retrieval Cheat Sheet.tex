@@ -114,7 +114,7 @@ With increasing dimensions $p$:
     if $f$ and $g$ are convex, then $max(f,g)$, $f+g$ and $g\circ h$ (if $g$ non-decreasing) are convex. A local minimum of a \emph{strictly} convex function is a global minimum and unique.
 \end{emphbox}
 \end{sectionbox}
-
+\vspace{50}
 \section{Logistic Regression}
 \begin{sectionbox}
 \subsection{Formulation via Optimization}
@@ -169,15 +169,18 @@ Results are identical up to the factor 1/n
 This is proven by noting that for a global minimum to exist, a point with small, positive loss exists (3.17) such that all points have losses greater than or equal to this point (3.16). This has to be satisfied along the linearly seperable constraint (3.18). If this constraint is always satisfied, then (3.19) is always positive, which when subbed into (3.15) and scaling weights and bias to infinity we find that the loss approaches zero (3.21), thus violating the global minimum condition (3.18). This is prevented via regularization (3.23).
 \end{sectionbox}
 
-\section{Kernels}
+\section{Kernel Method}
 \begin{sectionbox}
-Kernels replace the standard inner products with some function that is \emph{a suitable generalization of an inner product} to allow for nonlinear behavior.
+In its simplest form, the kernel trick means transforming data into another dimension that has a clear dividing margin between classes of data. The Kernel trick simply computes the inner products between the images of all pairs of data in the feature space to learn a nonlinear function or decision boundary.
 \begin{emphbox}
     A positive semidefinite Kernel is a function $\kappa: \R^{p}\times \R^{p}\rightarrow\R$ such that for all finite sets $\mathbf{X}=\{\mathbf{x}_1,\cdot,\mathbf{x_n}\}$ the \emph{Gram-Matrix} $\mathbf{K}_{ij} = \kappa(\mathbf{x_i,x_j})$ is symmetric and positive semidefinite  
 \end{emphbox}
 \begin{itemize}
-    \item Symmetric: $\kappa(\mathbf{x_i,x_j})=\kappa(\mathbf{x_j,x_i}) \ \forall i,j$
-    \item positive semi definite $\forall \mathbf{x}$: $\mathbf{x^TKx}\ge 0\ $ or all eigenvalues $\ge 0$
+    \item Symmetric $\forall i,j: \kappa(\mathbf{x_i,x_j})=\kappa(\mathbf{x_j,x_i})$
+    \item Positive semidefinite $\forall \mathbf{x}$: $\mathbf{x}^T\mathbf{Kx}\ge 0\ $ or all eigenvalues $\ge 0$
+    \item We can determine whether a particular function is a kernel by testing for violations of symmetry or positive semidefiniteness.
+    Symmetry can easily be tested by substituting named variables into the kernel, then flipping around the variables and seeing whether the kernel expression is the same.
+    \item Positive semidefiniteness can be tested as violated by definition, or if any diagonal values are ever negative. Furthermore, if the determinant of a matrix is negative it is definitely not psd (since psd eigenvalues are nonnegative and the determinant is the product of the eigenvalues), but we cannot say anything if the determinant is positive.
 \end{itemize}
 \subsection{Common Kernels and Rules}
 \begin{itemize}
@@ -188,6 +191,7 @@ Kernels replace the standard inner products with some function that is \emph{a s
     \item If $\kappa_1, \kappa_2$ are Kernels and $c\ge0$, then $c\kappa_1$, $c+\kappa_1$, $\kappa_1+\kappa_2$ and $\kappa_1\cdot\kappa_2$ are kernels as well
 \end{itemize}
 \end{sectionbox}
+
 
 \section{Principal Component Analysis}
 \begin{sectionbox}
@@ -239,11 +243,9 @@ Instead of replacing the inner product $\mathbf{x^Ty}$ by $\langle\phi(\mathbf{x
     $\mathbf{k}^{new}=\mat{kappa(\mathbf{x_1,y}) & \cdots & kappa(\mathbf{x_n,y})}^T$\\
     $\mathbf{k}_{cent}^{new}=\mathbf{Hk}_{}^{new}-\frac{1}{n}\mathbf{HK}\mathds{1}_n$
 \end{emphbox}
-
 \end{sectionbox}
 
 \begin{sectionbox}
-
 \begin{cookbox}{Kernel Principal Component Analysis}
         \item  for training set $\mathbf{X}=\mat{\mathbf{x}_1 & \cdots &\mathbf{x}_n}, \ \mathbf{x}_1\in\R^p$
 		\item Find suitable Kernel function $\kappa(\cdot)$ and compute Gram Matrix $\mathbf{K}$
@@ -389,19 +391,6 @@ We get for the output-layer (L): $\frac{\partial}{\partial\mathbf{W}_l}F=\mathbf
 
 $\frac{\partial}{\partial\mathbf{W}_j}F=\mathbf{J}_L(\mathbf{h}_l)\cdot\mathbf{J}_{\sigma_l}(\mathbf{W_lh_{l-1}})\cdot\mathbf{W_l}\mathbf{J}_{\sigma_{l-1}}(\mathbf{W_{l-1}h_{l-2}})\cdot\mathbf{J}_{l-1}\cdots \mathbf{J}_{mult}(\mathbf{h}_{l-1})$ for the j-th layer
 \end{emphbox}
-\end{sectionbox}
-
-\section{Kernel Trick}
-\begin{sectionbox}
-\begin{itemize}
-\item A kernel is a function that maps two sets containing real numbers (representing a sample) to a single scalar, such that for all possible sets of samples (contained in a data matrix with columns corresponding to samples) the Gram-Matrix (6.1) is symmetric and positive semidefinite.
-\begin{emphbox}
-    A positive semidefinite Kernel is a function $\kappa: \R^{p\times\p}\rightarrow\R$ so that for all sets $\mathbf{X}=\{\mathbf{x}_1,\cdot,\mathbf{x_n}\}$ the \emph{Gram-Matrix} $\mathbf{K}_{ij} = \kappa(\mathbf{x_i,x_j})$ is symmetric and positive semi definite  
-\end{emphbox}
-\item We can determine whether a particular function is a kernel by testing for violations of symmetry or positive semidefiniteness.
-Symmetry can easily be tested by substituting named variables into the kernel, then flipping around the variables and seeing whether the kernel expression is the same.
-\item Positive semidefiniteness can be tested as violated by definition, or if any diagonal values are ever negative. Furthermore, if the determinant of a matrix is negative it is definitely not psd (since psd eigenvalues are nonnegative and the determinant is the product of the eigenvalues), but we cannot say anything if the determinant is positive.
-\end{itemize}
 \end{sectionbox}
 
 \section{Kernel PCA}
