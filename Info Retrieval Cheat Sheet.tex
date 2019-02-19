@@ -117,42 +117,56 @@ With increasing dimensions $p$:
 
 \section{Logistic Regression}
 \begin{sectionbox}
-
-\subsection{Binary Classification}
-Input Data: $X \in \R^p$, Output Variables: $Y\in\{-1,+1\}$\\
-$L_{0,1}(Y,f(X)) = 1$ \quad if $Y\cdot sign(f(X)) \leq 0$, numerically infeasible
-
-\subsection{Convexity}
-    \begin{emphbox}
-    	in convex set $\mathcal{C} \subset \R$, $f$ is convex, if $tf(\boldsymbol{x_2}+(1-t))f(\boldsymbol{x_1}) \ge f(t\boldsymbol{x_2}+(1-t))\boldsymbol{x_1} \quad \forall \boldsymbol{x_1,x_2}\in \mathcal{C}, t\in[0,1]$
-	\end{emphbox}
-	if $f,g$ convex, then: $max(f,g)$, $f+g$, $g\circ h$ (if g non-decreasing) are convex. Local minimum of \emph{strictly} convex is global minimum and unique\\
-	\begin{center}
-	    \includegraphics[width = 0.7\columnwidth]{figures/convexity.png}
-	\end{center}
-\subsection{Logistic Regression}
-
-Choose $f(\boldsymbol{x})=\boldsymbol{w^Tx}+b$ and log-loss $l(t)=log(1+e^{-t})$:
+\subsection{Formulation via Optimization}
+\begin{itemize}
+\item The aim of logistic regression to perform binary classification on a random vector, that is, map a random vector to either -1 or 1.
+\item In order to ensure that the outputs in logistic regression are either -1 or 1, the output in logistic regression is taken to be the sign of the output from a prediction function f which contributes to the decision.
+\item The loss function in logistic regression is taken to be the number of misclassifications of a prediction, that is, 1 if the decision from logistic regression does not match the target, and 0 if it does match.
+$f(z) = \left\{ \begin{array}{rcl}
+     1 & \mbox{if}
+& Y\cdot sign(f(x))\leq 0 \\ 0 & & \mbox{otherwise}\\
+\end{array}\right.$
+\item It is clear that we must find an appropriate f  to complete the decision function, and thus we define the global method with the \textbf{misclassification loss} as the problem we need to solve.
+$ \frac{1}{n}\sum\limits_{i=1}^nL_{0,1}(y_i,f(x_i))$
+\item The misclassification loss is extremely difficult to solve due to being non-continuous and non-convex, and so first we need to approximate this function as a convex function since they are easy to optimize.
+\item A convex approximation of misclassification loss is $log(1 + exp(-t))$, which when concatenated with  an affine function $f(\boldsymbol{x})=\boldsymbol{w^Tx}+b$ is also convex, and can therefore be easily optimized via minimization.\\
+\begin{center}
 \begin{emphbox}
-$\min\limits_{\boldsymbol{w}\in\R^n,b\in\R}\frac{1}{n}\sum_{i=1}^nlog(1+exp(-y_i(\boldsymbol{w^Tx_i}+b)))$
+    $\min\limits_{\boldsymbol{w}\in\R^n,b\in\R}\frac{1}{n}\sum\limits_{i=1}^nlog(1+exp(-y_i(\boldsymbol{w}^T\boldsymbol{x}_i+b)))$
+    \end{emphbox}
+\end{center}
+\item Noting that the loss is in \textbf{negative log-likelihood} form, we can convert this to a probability by taking the exponential of likelihood.
+\begin{emphbox}
+    \begin{center}
+        $Pr(Y=y|x)=\frac{1}{1+exp(-y(\boldsymbol{w}^T\boldsymbol{x}+b))}$
+    \end{center}
 \end{emphbox}
-$P(Y=y|x)=\frac{1}{1+exp(-y(\boldsymbol{w^Tx}+b))}$, Prob. that y is correct\\
-Find $\boldsymbol{w^*}, b^*$ by gradient descent\\
-Classify new sample: $sign(\boldsymbol{w^{*T}x_{new}}+b^*)$
+Gradient-based methods can be used to find affine weights $\boldsymbol{w}$ and bias $b$ that solve the optimization problem (\emph{first box}).\\ Classify new sample: $sign(\boldsymbol{w}^{T}\boldsymbol{x}_{new}+b)$.
+\end{itemize}
 
-\subsection{Overfitting}
-For linearly separable non empty training sets, the loss function has no global minimum in $\R^{p+1}$. If there is a dividing hyperplane (=lin. separable), we can scale its parameters and increase the value of the loss function. Dies does not need to be the best dividing hyperplane! Fixed by regularizer, e.g. adding $\lambda||\boldsymbol{w}||^2+b^2$
+\subsection{Overfitting on Logistic Regression}
+\begin{itemize}
+\item When the samples are linearly separable (\emph{a dividing hyperplane exists}), there is a constraint that the target times the affine output is always greater than zero Under this constraint, no global minimum exists.
+\begin{emphbox}
+    If the data is linearly separable, we can find ($\boldsymbol{w}_s,b_s$) so that: $\forall i:\,y_i(\boldsymbol{w}_s^T\boldsymbol{x}_i+b_s)<0$ \\
+    then the loss-function has no global minimum in $\R^{p+1}$
+\end{emphbox}
+This can be fixed by introducing a regulator which penalizes the magnitude of $(\boldsymbol{w}, b)$, e.g. by fixing a real constant $\lambda>0$ and adjusting the original cost function as  $\hat{F}(\boldsymbol{w}, b)=F(\boldsymbol{w}, b)+\lambda||\boldsymbol{w}||^2+b^2$.
+\end{itemize}
 
 \subsection{Alternative Approach (Statistics)}
-Linear Model: $a = w_0+w_1x_1+...+w_nx_m = \boldsymbol{w^Tx}$\\
+Linear Model: $a = w_0+w_1x_1+...+w_nx_m = \boldsymbol{w}^T\boldsymbol{x}$\\
 \begin{tabular}{ll}
-    Probability: $\sigma(a)=\frac{1}{1+e^{-a}}$ & $D=\{(\boldsymbol{x_i},z_i)\}$\\
-    Find $\boldsymbol{w}_{MLE}=arg \max\limits_{\boldsymbol{w}} P(D|\boldsymbol{w})$ &  $\boldsymbol{x_i}\in \R^d, z_i\in\{0,1\}$\\
+    Probability: $\sigma(a)=\frac{1}{1+e^{-a}}$ & $D=\{(\boldsymbol{x}_i,z_i)\}$\\
+    Find $\boldsymbol{w}_{MLE}=arg \max\limits_{\boldsymbol{w}} P(D|\boldsymbol{w})$ &  $\boldsymbol{x}_i\in \R^d, z_i\in\{0,1\}$\\
 \end{tabular}
-$P(D|\boldsymbol{w})=\prod\limits_{i=1}^n\sigma(\boldsymbol{w^Tx_i})^{z_i}(1-\sigma(\boldsymbol{w^Tx_i}))^{1-z_i}$\\
-$L(\boldsymbol{w})=-log(P(D|\boldsymbol{w}))$, $\nabla_{\boldsymbol{w}}L(\boldsymbol{w})=\boldsymbol{X}(\sigma(\boldsymbol{X^Tw})-\boldsymbol{z})$\\
+$P(D|\boldsymbol{w})=\prod\limits_{i=1}^n\sigma(\boldsymbol{w}^T\boldsymbol{x}_i)^{z_i}(1-\sigma(\boldsymbol{w}^T\boldsymbol{x}_i))^{1-z_i}$\\
+$L(\boldsymbol{w})=-log(P(D|\boldsymbol{w}))$, $\nabla_{\boldsymbol{w}}L(\boldsymbol{w})=\boldsymbol{X}(\sigma(\boldsymbol{X}^T\boldsymbol{w})-\boldsymbol{z})$\\
 (Requires Hessian Matrix, which is positive semi-definite)\\
 Results are identical up to the factor 1/n
+\\
+\subsubsection{Proof}
+This is proven by noting that for a global minimum to exist, a point with small, positive loss exists (3.17) such that all points have losses greater than or equal to this point (3.16). This has to be satisfied along the linearly seperable constraint (3.18). If this constraint is always satisfied, then (3.19) is always positive, which when subbed into (3.15) and scaling weights and bias to infinity we find that the loss approaches zero (3.21), thus violating the global minimum condition (3.18). This is prevented via regularization (3.23).
 \end{sectionbox}
 
 \section{Kernels}
@@ -299,47 +313,6 @@ $n$ depends on loss function (Output of FNN is input of Loss)
 %  Lecture Notes Summary =======================================================================================================================
 
 \newpage
-
-\section{Logistic Regression}
-\begin{sectionbox}
-\subsection{Formulation via Optimization}
-\begin{itemize}
-\item The aim of logistic regression to perform binary classification on a random vector, that is, map a random vector to either -1 or 1.
-\item In order to ensure that the outputs in logistic regression are either -1 or 1, the output in logistic regression is taken to be the sign of the output from a prediction function f which contributes to the decision.
-\item The loss function in logistic regression is taken to be the number of misclassifications of a prediction, that is, 1 if the decision from logistic regression does not match the target, and 0 if it does match.
-$f(z) = \left\{ \begin{array}{rcl}
-     1 & \mbox{if}
-& Y\cdot sign(f(x))\leq 0 \\ 0 & & \mbox{otherwise}\\
-\end{array}\right.$
-\item It is clear that we must find an appropriate f  to complete the decision function, and thus we define the global method with the \textbf{misclassification loss} as the problem we need to solve.
-$ \frac{1}{n}\sum\limits_{i=1}^nL_{0,1}(y_i,f(x_i))$
-\item The misclassification loss is extremely difficult to solve due to being non-continuous and non-convex, and so first we need to approximate this function as a convex function since they are easy to optimize.
-\item A convex approximation of misclassification loss is $log(1 + exp(-t))$, which when concatenated with  an affine function $f(\boldsymbol{x})=\boldsymbol{w^Tx}+b$ is also convex, and can therefore be easily optimized via minimization.\\
-\begin{center}
-\begin{emphbox}
-    $\min\limits_{\boldsymbol{w}\in\R^n,b\in\R}\frac{1}{n}\sum\limits_{i=1}^nlog(1+exp(-y_i(\boldsymbol{w^Tx}_i+b)))$
-    \end{emphbox}
-\end{center}
-\item Noting that the loss is in \textbf{negative log-likelihood} form, we can convert this to a probability by taking the exponential of likelihood.
-\begin{emphbox}
-    \begin{center}
-        $Pr(Y=y|x)=\frac{1}{1+exp(-y(\boldsymbol{w^Tx}+b}$
-    \end{center}
-\end{emphbox}
-Gradient-based methods can be used to find affine weights and bias that optimize 3.3.
-\end{itemize}
-\subsection{Overfitting on Logistic Regression}
-\begin{itemize}
-\item When the samples are linearly separable, there is a constraint that the target times the affine output is always greater than zero Under this constraint, no global minimum exists.
-\begin{emphbox}
-    If the data is linearly separable, we can find ($\boldsymbol{w_s},b_s$) so that: $y_i(\boldsymbol{w_s^Tx_i}+b_s)<0 \ \forall i$\\
-    then the lossfunction has no global minimum in $\R^{p+1}$
-\end{emphbox}
-\end{itemize}
-
-\subsubsection{Proof}
-This is proven by noting that for a global minimum to exist, a point with small, positive loss exists (3.17) such that all points have losses greater than or equal to this point (3.16). This has to be satisfied along the linearly seperable constraint (3.18). If this constraint is always satisfied, then (3.19) is always positive, which when subbed into (3.15) and scaling weights and bias to infinity we find that the loss approaches zero (3.21), thus violating the global minimum condition (3.18). This is prevented via regularization (3.23).
-\end{sectionbox}
 
 \begin{sectionbox}
 \section{Principal Component Analysis}
