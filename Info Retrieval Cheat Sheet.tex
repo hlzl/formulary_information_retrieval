@@ -14,6 +14,8 @@
 % default: color, english
 \documentclass[english]{latex4ei/latex4ei_sheet}
 \usepackage{dsfont}
+\usepackage{textcomp}
+\usepackage{bbm}
 % set document information
 \title{Information \\Retrieval in High\\ Dimensional Data}
 
@@ -73,6 +75,14 @@ Difference between Empirical Loss and Expected Loss for a function $f$.
     \item $G_N \to 0$ for $N\to \infty$
 \end{itemize}
 
+\subsection{$k$-nearest Neighbors}
+Problem: among many observations $(x_i,y_i)$ there is probably none with $x_i=x$.
+\begin{itemize}
+    \item Solvable by taking all observations into account which are near the desired $x$: $\hat{f}=\mathrm{average}(y_i|x_i \in N_k(x))$
+    \item If the set of neighbors $k$ increases, the average tends towards the expectation value
+    \item $x_i$ comes closer to $x$ if number of observations $N$ increases
+    \item In practice $N$ is limited, thus imposing a model assumption for linear regression or "reducing" the dimesion of $X$ is needed.
+\end{itemize}
 \subsection{Curse of Dimensionality}
 Most of the time it is desired that the dimensionality of samples are decreased due to various problems involved with working in high dimensions.\\
 With increasing dimensions $p$:
@@ -241,14 +251,14 @@ The idea behind the statistical interpretation is that covariance matrices are s
 \begin{itemize}
 \item The error model interpretation is that the samples $\boldsymbol{X}$ is obtained via the addition between a signal matrix $\boldsymbol{L}$ (\emph{clean data}) and a noise matrix $\boldsymbol{N}$, where $\boldsymbol{L}$ is lying on a lower dimensional subspace than $\boldsymbol{X}$, and the goal is to try and find $\boldsymbol{L}$.
 [$\boldsymbol{X}=\boldsymbol{L}+\boldsymbol{N}$]
-\item Setting $\boldsymbol{L}$ equal to the SVD ($p$ dimensions with $k$; $rank(\boldsymbol{L})=k$) minimizes the Frobenius norm of the difference between $\boldsymbol{X}$ and $\boldsymbol{L}$ given that the dimension $k$ of the subspace which $\boldsymbol{L}$ lies in is known beforehand. \\
-\hspace{5}[ $\arg\min_{rank(\boldsymbol{L})}||\boldsymbol{X}-\boldsymbol{L}||_F$] 
+\item Setting $\boldsymbol{L}$ equal to the SVD ($p$ dimensions with $k$; $rank(\boldsymbol{L})\le k$) minimizes the Frobenius norm of the difference between $\boldsymbol{X}$ and $\boldsymbol{L}$ given that the dimension $k$ of the subspace which $\boldsymbol{L}$ lies in is known beforehand. \\
+$ \hat{\boldsymbol{L}}=\arg\min_{rank(\boldsymbol{L})}||\boldsymbol{X}-\boldsymbol{L}||_F=\boldsymbol{U}_k\mathrm{diag}(d_1,..,d_k)\boldsymbol{V}_k^{\top}$
 \end{itemize}
 
 \subsection{Relation to Autoencoders}
 \begin{itemize}
     \item Autoencoders map an input to low dimensional space using a function $f$, which is then mapped back to a higher dimensional space using a function $g$ and can approximate the input $g\circ f(\boldsymbol{x_i})\approx\boldsymbol{x_i}$
-\item Letting $f$ and $g$ be linear mappings represented by matrices, the reconstruction error $J(\mathbf{W,V})=\sum_{i=1}^n||\boldsymbol{x_i-WVx_i}||^2$ is minimised by setting $f$ as the transpose of $U_k$ and $g$ as $U_k$.
+\item Letting $f$ and $g$ be linear mappings represented by matrices, the reconstruction error $J(\mathbf{W,V})=\sum_{i=1}^n||\boldsymbol{x}_i-\boldsymbol{WVx}_i||^2$ is minimised by setting $f$ as the transpose of $U_k$ and $g$ as $U_k$.
 \begin{emphbox}
     Let $\mathbf{U}_k$ be the first $k$ left singular vectors of observation matrix $\mathbf{X}$, the $\mathbf{V}=\mathbf{U}_k^{\top}$ and $\mathbf{W}=\mathbf{U}_k$ minimize the reconstruction error of the linear autoencoder.
 \end{emphbox}
@@ -257,6 +267,9 @@ The idea behind the statistical interpretation is that covariance matrices are s
 \end{itemize}
 \end{sectionbox}
 \textbf{Notes:}
+\begin{itemize}
+    \item Low dimensional subspace $\hat{=}$ low rank
+\end{itemize}
 
 \vspace{300}
 \section{Kernel PCA}
@@ -297,8 +310,16 @@ Instead of replacing the inner product $\mathbf{x^{\top}y}$ by $\langle\phi(\mat
 
 \begin{sectionbox}
 \begin{cookbox}{Kernel Principal Component Analysis}
-    \item  for training set $\mathbf{X}=\mat{\mathbf{x}_1 & \cdots &\mathbf{x}_n}, \ \mathbf{x}_1\in\R^p$
-	\item Find suitable Kernel function $\kappa(\cdot)$ and compute Gram Matrix $\mathbf{K}$
+    \item  for training set $\mathbf{X}=\mat{\mathbf{x}_1 & \cdots &\mathbf{x}_n}, \ \mathbf{x}_i\in\R^p$
+	\item Find suitable Kernel function $\kappa(\cdot)$ and compute Gram Matrix
+	\[
+    \mathbf{K}=
+    \begin{bmatrix}
+    \kappa(\mathbf{x}_1,\mathbf{x}_1) & \dots  & \kappa(\mathbf{x}_1,\mathbf{x}_n) \\
+    \vdots & \ddots & \vdots \\
+    \kappa(\mathbf{x}_n,\mathbf{x}_1) & \dots  & \kappa(\mathbf{x}_n,\mathbf{x}_n)
+    \end{bmatrix}
+    \]
 	\item Compute centered Gram Matrix: $\mathbf{\tilde{K}=HKH}$ with\\ $\mathbf{H=I}_n-\frac{1}{n}\mathds{1}_n\mathds{1}_n^{\top}$
 	\item Compute Eigenvalue Decomposition: $\mathbf{\tilde{K}=V\Lambda V^{\top}}$. Because $\mathbf{K}$ is positive semi-definite and therefore the diagonal entries of $\mathbf{\Lambda}$ are non-negative, we write $\mathbf{\Lambda=\Sigma}^2=diag(\sigma_1^2, \cdot, \sigma_n^2)$
 	\item Reduced Matrices: $\mathbf{\Sigma_k}=diag(\sigma_1,\cdots,\sigma_k),\ \in\R^{k\times k}$ and $\mathbf{V}_k\in\R^{n\times k}$
@@ -446,6 +467,19 @@ Allows for some wrongly assigned data samples and searches for a trade-off betwe
     \item \textbf{Unsupervised Learning}: data does not have to be labeled (by supervisor) before data is employed for learning algorithm (e.g. PCA).
     \item \textbf{Supervised Learning}: data is labeled and thus the is model is trained $\rightarrow$ Classification vs. Regression
     \item \textbf{Regression}: predicting trends using previous labeled data
+    \item $cov(x_1,x_2)=\frac{1}{n}XX^{\top}=\frac{(x_{11}x_{21}+x_{12}x_{22}+...)}{n\cdot||x_1||\cdot||x_2||}$
+    \item \textbf{Data Scales}:\\
+    \emph{Qualitative}: Nominal ($=,\neq\;\rightarrow$ Gender or Names), \\Ordinal ($\ge,\le,>,<\;\rightarrow$ Happiness)\\
+    \emph{Quantitative}: Interval ($x,-\;\rightarrow$ 2019 or 18°C), \\Ratio ($ * , \frac{\cdot}{\cdot} \;\rightarrow$ Distance or Area)
+    \item A function $f$ is called a \textbf{Distance Measure} if $\forall x,y \in \mathbb{R}^p$:\\
+    \emph{Symmetry}: $d(x,y)=d(y,x)$\\
+    \emph{Positive Definiteness}: $d(x,y)=0 \Leftrightarrow x=y; d(x,y)\ge0$\\
+    \emph{Triangular Irregularity}: $d(x,z)\ge d(x,y)+d(x,z)$
+    \item \textbf{Taxicab/Manhattan Norm}: $||\mathbf{x}||_1=\sum_{i=1}^n{x_1}$\\
+    \textbf{Euclidean Norm}: $||\mathbf{x}||_2=\sqrt{x_1^2+...+x_n^2}$\\
+    \textbf{Maximum Norm}: $||\mathbf{x}||_{\infty}=max(|x_1|,...,|x_n|)$\\
+    \textbf{Inner Product Norm}: $||\mathbf{x}||_A=\sqrt{\mathbf{x}A\mathbf{x}^{\top}}$  [Frobenius: $A=\mathbbm{1}$]\\
+    \emph{Reminder}: $||q\cdot\mathbf{x}||=|q|\cdot||\mathbf{x}||$ and $||\mathbf{x}+\mathbf{y}||\le||\mathbf{x}||+||\mathbf{y}||$
 \end{itemize}
 
 
@@ -470,7 +504,14 @@ Given a prediction table, eg:
     \end{cookbox}
 \begin{sectionbox}
 \subsection{Classification Analysis}
-
+\emph{False Positive}: Indicates presence of a condition, but actually not present.
+\emph{False Negative}: Indicates \textbf{no} presence of a condition, actually \textbf{is} present.
+\begin{itemize}
+    \item \textbf{Accuracy}: $\frac{\text{# correct predictions}}{\text{# total data points}}$
+    \item \textbf{Precision}: $\frac{\text{# correctly returned relevant answers}}{\text{total items returned by ranker}}$
+    \item \textbf{Recall}: $\frac{\text{# correctly returned relevant answers}}{\text{total relevant items}}$
+    \item \textbf{F1-Score}: $F_1= 2*\frac{precision*recall}{precision+recall}$
+\end{itemize}
 \subsubsection{ROC Curve}
 The ROC curve is a graphical plot that illustrates the diagnostic ability of a binary classifier system as its discrimination threshold is varied. It shows:
 \begin{itemize}
