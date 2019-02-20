@@ -210,8 +210,8 @@ Assuming distribution of unlabeled raw data is concentrated around some lower-di
     The first $k$ columns of the first orthonormal matrix via SVD $\boldsymbol{U}_k$ minimizes the difference between data points and their projections, and the corresponding covariance matrix of the scores is diagonal (= features are uncorrelated).
 \end{emphbox}
 \begin{itemize}
-\item The \emph{empirical covariance matrix} or \emph{Score Matrix} of the reduced $k$ variables $\boldsymbol{S}=\boldsymbol{U}_k^{\top}\boldsymbol{X}$ is diagonal, i.e. the features extracted by the PCA are uncorrelated.       \hspace{20} [$cov(\boldsymbol{S})=\frac{1}{n}\boldsymbol{S}\boldsymbol{S}^{\top}$]\\
-$s_{ij}$: j-th score of the i-th principal component
+\item The \emph{empirical covariance matrix} or \emph{Score Matrix} of the reduced $k$ variables $\boldsymbol{S}=\boldsymbol{U}_k^{\top}\boldsymbol{X}$ is diagonal, i.e. the features extracted by the PCA are uncorrelated.        [$cov(\boldsymbol{S})=\frac{1}{n}\boldsymbol{S}\boldsymbol{S}^{\top}=\frac{1}{n}\boldsymbol{U}^{\top}\boldsymbol{X}\boldsymbol{X}^{\top}\boldsymbol{U}$]\\
+$s_{ij}$: $j$-th score for the $i$-th principal component
 \item $U_k$ is the Loading Matrix give by $k$ left-singular vectors of the SVD of $\boldsymbol{\hat{X}}$.
 \item $\boldsymbol{S}$ can directly be obtained by the SVD with $\boldsymbol{S}=\boldsymbol{D}_k\boldsymbol{V}_k^{\top}$. As $\boldsymbol{D_k}$ is diagonal and $\boldsymbol{V}_k^{\top}$ only has $k$-rows, this only requires $nk$ operations instead of non-feasible $(2p-1)nk$ operations.
 \item \emph{Dimensions}:\\ $X\in\R^{m\times n}$, $U\in\R^{m\times m}$, $D\in\R^{m\times n}$, $V^{\top}\in\R^{n\times n}$, $U_k\in\R^{k\times n}$, $X_k\in\R^{k\times n}$, $m$: Dimension variable, $n$: samples
@@ -239,17 +239,18 @@ The idea behind the statistical interpretation is that covariance matrices are s
 \begin{sectionbox}
 \subsection{Error Model Interpretation}
 \begin{itemize}
-\item The error model interpretation is that the samples $\boldsymbol{X}$ is obtained via the addition between a signal matrix $\boldsymbol{L}$ and a noise matrix $\boldsymbol{N}$, where $\boldsymbol{L}$ is lying on a lower dimensional subspace than $\boldsymbol{X}$, and the goal is to try and find $\boldsymbol{L}$.
-Theorem 4.2
-\item Setting $\boldsymbol{L}$ equal to the SVD ($p$ dimensions with $k$) minimizes the Frobenius norm of the difference between $\boldsymbol{X}$ and $\boldsymbol{L}$ given that the dimension $k$ of the subspace which $\boldsymbol{L}$ lies in is known beforehand.
+\item The error model interpretation is that the samples $\boldsymbol{X}$ is obtained via the addition between a signal matrix $\boldsymbol{L}$ (\emph{clean data}) and a noise matrix $\boldsymbol{N}$, where $\boldsymbol{L}$ is lying on a lower dimensional subspace than $\boldsymbol{X}$, and the goal is to try and find $\boldsymbol{L}$.
+[$\boldsymbol{X}=\boldsymbol{L}+\boldsymbol{N}$]
+\item Setting $\boldsymbol{L}$ equal to the SVD ($p$ dimensions with $k$; $rank(\boldsymbol{L})=k$) minimizes the Frobenius norm of the difference between $\boldsymbol{X}$ and $\boldsymbol{L}$ given that the dimension $k$ of the subspace which $\boldsymbol{L}$ lies in is known beforehand. \\
+\hspace{5}[ $\arg\min_{rank(\boldsymbol{L})}||\boldsymbol{X}-\boldsymbol{L}||_F$] 
 \end{itemize}
 
 \subsection{Relation to Autoencoders}
 \begin{itemize}
     \item Autoencoders map an input to low dimensional space using a function $f$, which is then mapped back to a higher dimensional space using a function $g$ and can approximate the input $g\circ f(\boldsymbol{x_i})\approx\boldsymbol{x_i}$
-\item Letting $f$ and $g$ be linear mappings represented by matrices, the reconstruction error $J(\textbf{W,V})=\sum_{i=1}^n||\boldsymbol{x_i-WVx_i}||^2$ is minimised by setting $f$ as the transpose of $U_k$ and $g$ as $U_k$.
+\item Letting $f$ and $g$ be linear mappings represented by matrices, the reconstruction error $J(\mathbf{W,V})=\sum_{i=1}^n||\boldsymbol{x_i-WVx_i}||^2$ is minimised by setting $f$ as the transpose of $U_k$ and $g$ as $U_k$.
 \begin{emphbox}
-    Let \textbf{$U_k$} be the first $k$ left singular vectors of observation matrix \textbf{X}, the $\textbf{V}=\textbf{U}_k^{\top}$ and $\textbf{W}=\textbf{U}_k$ minimize the reconstruction error of the linear autoencoder.
+    Let $\mathbf{U}_k$ be the first $k$ left singular vectors of observation matrix $\mathbf{X}$, the $\mathbf{V}=\mathbf{U}_k^{\top}$ and $\mathbf{W}=\mathbf{U}_k$ minimize the reconstruction error of the linear autoencoder.
 \end{emphbox}
 \item This is proven by noting that in Theorem 4.2 which has a problem of the same form, the error is minimized using the projections of the points on the subspace of interest, thus leading to $f$ and $g$ as the transpose of $U_k$ and $U_k$ itself respectively as they cause this projection.
 
@@ -419,11 +420,33 @@ Idea: Find hyperplane to divide $x, y$ into two subspaces
 Else: Kernel/Soft Margin SVM required
 \item SVM works better when (nearly) separable than Linear Regression and is preferred when using kernels.
 \end{itemize}
+
+\subsection{Soft Margin Linear SVM}
+Allows for some wrongly assigned data samples and searches for a trade-off between a large margin and a degree of misclassification.
+\begin{itemize}
+    \item Misclassification is quantified by set of $N$ additional variables $\xi_i$ that are assumed to be non-negative.\\
+    $y_i(\mathbf{w}^{\top}x_i-b)\ge 1-\xi_i)$, for all $i=1,...,N$
+    \item Optimization problem changes to\\
+    $\min_{\mathbf{w},b,\xi}\frac{1}{2}||\mathbf{w}||_2^2+c\sum_{i=1}^N\xi_i$\\
+    s.t. $y_i(\mathbf{w}^{\top}x_i-b)\ge 1-\xi_i)$ and $\xi_i\ge0\;\;\forall i$\\
+    \hspace{5}[ $c>0$\emph{ and weighs between large margin and misclassification }\\$\rightarrow$\emph{ larger }$c$\emph{, the more the violation of the separation rule is punished.}]
+\end{itemize}
 \end{sectionbox}
 
 \vspace{100}
 \section{Useful Facts}
-The matrix resulting from the dot product of between an $\mathbb{R}^{n \times p}$ matrix and $\mathbb{R}^{p \times n}$ has at most a rank of p.
+\begin{itemize}
+    \item The matrix resulting from the dot product of between an $\mathbb{R}^{n \times p}$ matrix and $\mathbb{R}^{p \times n}$ has at most a rank of p.
+    \item Examples for Loss-functions:\\
+    \textbf{Autoencoder}: $L(f(x))=||f(x)-X||_2^2$\\
+    \emph{reconstruct samples of} $x$\\ 
+    $f$:\emph{ concatenation of encoders and decoder function}\\
+    \textbf{Regression}: $L(f(x), Y)=||f(x)-Y||_2^2$\\
+    \emph{best} $f \in F$ \emph{that minimizes expectation of }$L$
+    \item \textbf{Unsupervised Learning}: data does not have to be labeled (by supervisor) before data is employed for learning algorithm (e.g. PCA).
+    \item \textbf{Supervised Learning}: data is labeled and thus the is model is trained $\rightarrow$ Classification vs. Regression
+    \item \textbf{Regression}: predicting trends using previous labeled data
+\end{itemize}
 
 
 \newpage
