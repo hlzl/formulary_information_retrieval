@@ -176,11 +176,11 @@ In its simplest form, the kernel trick means transforming data into another dime
     A positive semidefinite Kernel is a function $\kappa: \R^{p}\times \R^{p}\rightarrow\R$ such that for all finite sets $\mathbf{X}=\{\mathbf{x}_1,\cdot,\mathbf{x_n}\}$ the \emph{Gram-Matrix} $\mathbf{K}_{ij} = \kappa(\mathbf{x_i,x_j})$ is symmetric and positive semidefinite  
 \end{emphbox}
 \begin{itemize}
-    \item Symmetric $\forall i,j: \kappa(\mathbf{x_i,x_j})=\kappa(\mathbf{x_j,x_i})$
+    \item Symmetric $\forall i,j: \kappa(\mathbf{x}_j,\mathbf{x}_i)=\kappa(\mathbf{x}_j,\mathbf{x}_i)$
     \item Positive semidefinite $\forall \mathbf{x}$: $\mathbf{x}^T\mathbf{Kx}\ge 0\ $ or all eigenvalues $\ge 0$
     \item We can determine whether a particular function is a kernel by testing for violations of symmetry or positive semidefiniteness.
     Symmetry can easily be tested by substituting named variables into the kernel, then flipping around the variables and seeing whether the kernel expression is the same.
-    \item Positive semidefiniteness can be tested as violated by definition, or if any diagonal values are ever negative. Furthermore, if the determinant of a matrix is negative it is definitely not psd (since psd eigenvalues are nonnegative and the determinant is the product of the eigenvalues), but we cannot say anything if the determinant is positive.
+    \item Positive semidefiniteness can be tested as violated by definition, or if any diagonal values are ever negative. Furthermore, if the determinant of a matrix is negative it is definitely not positive semidefinite (since positive semidefinite eigenvalues are non-negative and the determinant is the product of the eigenvalues), but we cannot say anything if the determinant is positive.
 \end{itemize}
 \subsection{Common Kernels and Rules}
 \begin{itemize}
@@ -192,33 +192,68 @@ In its simplest form, the kernel trick means transforming data into another dime
 \end{itemize}
 \end{sectionbox}
 
-
-\section{Principal Component Analysis}
 \begin{sectionbox}
-Assuming distribution of raw data is concentrated around some lower dimensional plane. Most of the variance in the data can be described by it projection on a plane.\\
-\emph{Unsupervised Learning}: Structure unlabeled data. Here: reduce dimension of input without loosing to much information\\
-Goal: Find $\boldsymbol{U}_k\in\R^{pxk}$ that minimizes $\sum\limits_{i=1}^n||\boldsymbol{x}_i-\boldsymbol{U_kU_k^Tx_i}||^2_2$
-\subsection{PCA - Singular Value Decomposition}
-Important: $\boldsymbol{X}$: centered observation matrix
-SVD returns: $\boldsymbol{X} = \boldsymbol{DV^T}$ with singular values $d_1\ge d_2\ge ... \ge d_n$ on the diagonal of \textbf{D}\\
-$\boldsymbol{U_k}$ satisfies goal with Score Matrix $\boldsymbol{S}=\boldsymbol{U_k^TX}$\\
-$U$ is the Loading Matrix give by left-singular vectors of the SVD of $\boldsymbol{\hat{X}}$.\\ 
-$\boldsymbol{S}$ is diagonal and $cov(\boldsymbol{S})=\frac{1}{n}\boldsymbol{S}\boldsymbol{S}^T$.\\
-$s_{ij}$: j-th score of the i-th principal component.\\
-Computing the reduced variables with $\boldsymbol{S}=\boldsymbol{U_k^T}\boldsymbol{X}$ is not feasible as $(2p-1)nk$ operations are required, instead we use $\boldsymbol{D_kV_k^T}$ as $\boldsymbol{D_k}$ is diagonal and $\boldsymbol{V_k^T}$ only has $k$-rows ($nk$).\\
-The features which are extracted by PCA are uncorrelated.\\
-\emph{Dimensions}:\\ $X\in\R^{m\times n}$, $U\in\R^{m\times m}$, $D\in\R^{m\times n}$, $V^T\in\R^{n\times n}$, $U_k\in\R^{k\times n}$, $X_k\in\R^{k\times n}$, $m$: Dimension variable, $n$: samples\\
-The eigenvectors of $\mathbf{X_aX_a^T}$ are the loadings of $\mathbf{X_a}$ only if $\mathbf{X_a}$ is centered.
+\section{Principal Component Analysis}
+Assuming distribution of unlabeled raw data is concentrated around some lower-dimensional plane and a projection onto this plane captures most of the variance of the dataset. PCA uses an orthogonal transformation to convert a set of observations of possibly correlated variables into a set of values of linearly uncorrelated variables called principal components.\\
+\subsection{Geometric Interpretation}
+\begin{itemize}
+\item Imagining that $x$ is a vector in $p$ dimensions, and $U_k$ describes a lower dimensional subspace, then the coordinates of $x$ projected onto $U_k$ is found by first obtaining the scores of $x$ along $U_k$ and then taking the linear combination of these scores and the $U_k$ vectors: $\pi_\mathcal{U}(\boldsymbol{x})=\boldsymbol{U}_k\boldsymbol{U}_k^T\boldsymbol{x}, \ \boldsymbol{U}_k\in\R^{p\times k}$
+\item We want to find a $U_k$ that captures most of the variance in the dataset, which is equivalent to finding a hyperplane where the difference between the original data points and their projections are minimized, thus forming our problem for optimization.\\
+\begin{center}
+    $J(\boldsymbol{U}_k)=\sum\limits_{i=1}^n||\boldsymbol{x}_i-\boldsymbol{U}_k\boldsymbol{U}_k^T\boldsymbol{x}_i||^2_2$
+\end{center}
+\item The dataset can be represented as the dot product of an orthonormal matrix, a diagonal matrix and another orthonormal matrix via singular value decomposition: $\boldsymbol{X}=\boldsymbol{UDV}^T$.
+\end{itemize}
+\begin{emphbox}
+    The first $k$ columns of the first orthonormal matrix via SVD $\boldsymbol{U}_k$ minimizes the difference between data points and their projections, and the corresponding covariance matrix of the scores is diagonal (= features are uncorrelated).
+\end{emphbox}
+\begin{itemize}
+\item The \emph{empirical covariance matrix} or \emph{Score Matrix} of the reduced $k$ variables $\boldsymbol{S}=\boldsymbol{U}_k^T\boldsymbol{X}$ is diagonal, i.e. the features extracted by the PCA are uncorrelated.       \hspace{20} [$cov(\boldsymbol{S})=\frac{1}{n}\boldsymbol{S}\boldsymbol{S}^T$]\\
+$s_{ij}$: j-th score of the i-th principal component
+\item $U_k$ is the Loading Matrix give by $k$ left-singular vectors of the SVD of $\boldsymbol{\hat{X}}$.
+\item $\boldsymbol{S}$ can directly be obtained by the SVD with $\boldsymbol{S}=\boldsymbol{D}_k\boldsymbol{V}_k^T$. As $\boldsymbol{D_k}$ is diagonal and $\boldsymbol{V}_k^T$ only has $k$-rows, this only requires $nk$ operations instead of non-feasible $(2p-1)nk$ operations.
+\item \emph{Dimensions}:\\ $X\in\R^{m\times n}$, $U\in\R^{m\times m}$, $D\in\R^{m\times n}$, $V^T\in\R^{n\times n}$, $U_k\in\R^{k\times n}$, $X_k\in\R^{k\times n}$, $m$: Dimension variable, $n$: samples
+\item The eigenvectors of $\mathbf{X}\mathbf{X}^T$ are the loadings of $\mathbf{X}$ only if $\mathbf{X}$ is centered.
+\end{itemize}
+
+\subsection{Proof}
+\begin{itemize}
+\item Theorem 4.1 is proved by first reframing the minimization problem (4.2) into a maximization problem, reframing this again into a problem involving the trace of a rank k projection matrix, then noting that the maximum value along the diagonals is 1 (4.5) of which subbing in $U_k$ achieves due to its resulting in a identity matrix.
+We can show that the scores are uncorrelated by showing that the dot product between the scores and its transpose scaled by 1/n is a diagonal matrix using the SVD. (4.6)
+\item If we have the product between two matrices where the first matrix is is comprised of a diagonal matrix as well as a zero matrix, then we can get rid of the zero columns in the first matrix and also get rid of the corresponding rows in the left matrix.
+\item A computationally inexpensive way of obtaining the scores using the singular values and right singular vector can be derived by substiuting the SVD into the formula for the calculating the scores. (4.7)
+\end{itemize}
 
 \subsection{Statistical Interpretation}
-Goal: Find $Y=\boldsymbol{U^T}X$ with $\boldsymbol{U^TU=I}$ and declining variance of the components.
-
-\subsection{Autoencoders}
-Autoencoder: Form of neural networks, where input is first mapped to a lower dimension $k$ by $f$ and then back to input $g$: $g\circ f(x_i) \approx x_i$.
-If $f$ and $g$ are linear and represented by $\boldsymbol{V}\in\R^{k\times p}$ and $\boldsymbol{W}\in\R^{p\times k}$ then $g\circ f(x_i)=\boldsymbol{WV}x_i$ and the error is measuered by the sum of squared distances $\sum_{i=1}^n||x_i-\boldsymbol{XV}x_i||^2$, then the first k singular vectors of \textbf{X} are optimal. \\
-\textbf{WV} has at most rank k.\\
-If $f$ and $g$ are not linear: only approximation possible
+The idea behind the statistical interpretation is that covariance matrices are symmetric positive semidefinite, and therefore there exists some matrix $U$ which can diagonalize it (clearly illustrated using the eigenvalue decomposition). I.e. $Y=\boldsymbol{U}^TX$ with $\boldsymbol{U}^T\boldsymbol{U}=I_p$, such that the covariance matrix of $Y$ is diagonal and the variances decrease. In the same way:
+\begin{emphbox}
+        $\boldsymbol{D}=\boldsymbol{U}^Tvar(X)\boldsymbol{U} $
+        $= \mathbb{E}[\boldsymbol{U}^T(x-\mu_x)(X-\mu_x)^T\boldsymbol{U}]$
+        $=\mathbb{E}[(\boldsymbol{U}^TX-\boldsymbol{U}^T\mu_x)(\boldsymbol{U}^TX-\boldsymbol{U}^T\mu_x)^T]$
+        $=\mathbb{E}[(Y-\mu_y)(Y-\mu_y)^T=var(Y)$
+\end{emphbox}
 \end{sectionbox}
+
+\begin{sectionbox}
+\subsection{Error Model Interpretation}
+\begin{itemize}
+\item The error model interpretation is that the samples $\boldsymbol{X}$ is obtained via the addition between a signal matrix $\boldsymbol{L}$ and a noise matrix $\boldsymbol{N}$, where $\boldsymbol{L}$ is lying on a lower dimensional subspace than $\boldsymbol{X}$, and the goal is to try and find $\boldsymbol{L}$.
+Theorem 4.2
+\item Setting $\boldsymbol{L}$ equal to the SVD ($p$ dimensions with $k$) minimizes the Frobenius norm of the difference between $\boldsymbol{X}$ and $\boldsymbol{L}$ given that the dimension $k$ of the subspace which $\boldsymbol{L}$ lies in is known beforehand.
+\end{itemize}
+
+\subsection{Relation to Autoencoders}
+\begin{itemize}
+    \item Autoencoders map an input to low dimensional space using a function $f$, which is then mapped back to a higher dimensional space using a function $g$ and can approximate the input $g\circ f(\boldsymbol{x_i})\approx\boldsymbol{x_i}$
+\item Letting $f$ and $g$ be linear mappings represented by matrices, the reconstruction error $J(\textbf{W,V})=\sum_{i=1}^n||\boldsymbol{x_i-WVx_i}||^2$ is minimised by setting $f$ as the transpose of $U_k$ and $g$ as $U_k$.
+\begin{emphbox}
+    Let \textbf{$U_k$} be the first $k$ left singular vectors of observation matrix \textbf{X}, the $\textbf{V}=\textbf{U}_k^T$ and $\textbf{W}=\textbf{U}_k$ minimize the reconstruction error of the linear autoencoder.
+\end{emphbox}
+\item This is proven by noting that in Theorem 4.2 which has a problem of the same form, the error is minimized using the projections of the points on the subspace of interest, thus leading to $f$ and $g$ as the transpose of $U_k$ and $U_k$ itself respectively as they cause this projection.
+
+\end{itemize}
+\end{sectionbox}
+
 
 \section{Kernel-PCA}
 \begin{sectionbox}
@@ -315,56 +350,6 @@ $n$ depends on loss function (Output of FNN is input of Loss)
 %  Lecture Notes Summary =======================================================================================================================
 
 \newpage
-
-\begin{sectionbox}
-\section{Principal Component Analysis}
-PCA represents the data projected onto a lower-dimensional plane which captures most of the variance of the dataset.
-\subsection{Geometric Interpretation}
-\begin{itemize}
-\item Imagining that $x$ is a vector in $p$ dimensions, and $U_k$ describes a lower dimensional subspace, then the coordinates of $x$ projected onto $U_k$ is found by first obtaining the scores of $x$ along $U_k$ and then taking the linear combination of these scores and the $U_k$ vectors: $\pi_\mathcal{U}(\boldsymbol{x})=\boldsymbol{U_kU_k^Tx}, \ \boldsymbol{U_k}\in\R^{p\times k}$
-\item We want to find a $U_k$ that captures most of the variance in the dataset, which is equivalent to finding a hyperplane where the difference between the original data points and their projections are minimized, thus forming our problem for optimization.\\
-\begin{center}
-    $J(\boldsymbol{U_k})=\sum\limits_{i=1}^n||\boldsymbol{x_i}-\boldsymbol{U_kU_k^Tx_i}||^2_2$
-\end{center}
-\item The dataset can be represented as the dot product of an orthonormal matrix, a diagonal matrix and another orthonormal matrix via singular value decomposition: $\boldsymbol{X}=\boldsymbol{UDV}^T$.
-\end{itemize}
-\begin{emphbox}
-    The first $k$ columns of the first orthonormal matrix via SVD $\boldsymbol{U_k}$ minimizes the the difference between data points and their projections, and the corresponding covariance matrix of the scores is diagonal (= features are uncorrelated).
-\end{emphbox}
-\begin{itemize}
-\subsection{Proof}
-
-\item Theorem 4.1 is proved by first reframing the minimization problem (4.2) into a maximization problem, reframing this again into a problem involving the trace of a rank k projection matrix, then noting that the maximum value along the diagonals is 1 (4.5) of which subbing in $U_k$ achieves due to its resulting in a identity matrix.
-We can show that the scores are uncorrelated by showing that the dot product between the scores and its transpose scaled by 1/n is a diagonal matrix using the SVD. (4.6)
-\item If we have the product between two matrices where the first matrix is is comprised of a diagonal matrix as well as a zero matrix, then we can get rid of the zero columns in the first matrix and also get rid of the corresponding rows in the left matrix.
-\item A computationally inexpensive way of obtaining the scores using the singular values and right singular vector can be derived by substiuting the SVD into the formula for the calculating the scores. (4.7)
-\end{itemize}
-
-\subsection{Statistical Interpretation}
-The idea behind the statistical interpretation is that covariance matrices are symmetric positive semidefinite, and therefore there exists some matrix U which can diagonalize it (clearly illustrated using the eigenvalue decomposition). Thus we can push U inside the covariance formula (4.8) to show that the scores with uncorrelated dimensions are obtained by projecting X onto U. (4.9)
-\begin{emphbox}
-        $\boldsymbol{D}=\boldsymbol{U^T}var(X)\boldsymbol{U} = E[\boldsymbol{U^T(x-\mu_x)(X-\mu_x)^T\boldsymbol{U}}]=E[(\boldsymbol{U^T}X-\boldsymbol{U^T}\mu_x)(\boldsymbol{U^T}X-\boldsymbol{U^T}\mu_x)^T]=E[(\boldsymbol{Y}-\mu_y)(\boldsymbol{Y}-\mu_y)^T=var(\boldsymbol{Y})$
-\end{emphbox}
-\subsection{Error Model Interpretation}
-\begin{itemize}
-\item The error model interpretation is that the samples $\boldsymbol{X}$ is obtained via the addition between a signal matrix $\boldsymbol{L}$ and a noise matrix $\boldsymbol{N}$, where $\boldsymbol{L}$ is lying on a lower dimensional subspace than $\boldsymbol{X}$, and the goal is to try and find $\boldsymbol{L}$.
-Theorem 4.2
-\item Setting $\boldsymbol{L}$ equal to the SVD ($p$ dimensions with $k$) minimizes the Frobenius norm of the difference between $\boldsymbol{X}$ and $\boldsymbol{L}$ given that the dimension $k$ of the subspace which $\boldsymbol{L}$ lies in is known beforehand.
-\end{itemize}
-\end{sectionbox}
-
-\begin{sectionbox}
-\subsection{Relation to Autoencoders}
-\begin{itemize}
-    \item Autoencoders map an input to low dimensional space using a function $f$, which is then mapped back to a higher dimensional space using a function $g$ and can approximate the input $g\circ f(\boldsymbol{x_i})\approx\boldsymbol{x_i}$
-\item Letting $f$ and $g$ be linear mappings represented by matrices, the reconstruction error $J(\textbf{W,V})=\sum_{i=1}^n||\boldsymbol{x_i-WVx_i}||^2$ is minimised by setting $f$ as the transpose of $U_k$ and $g$ as $U_k$.
-\begin{emphbox}
-    Let \textbf{$U_k$} be the first $k$ left singular vectors of observation matrix \textbf{X}, the $\textbf{V}=\textbf{U}_k^T$ and $\textbf{W}=\textbf{U}_k$ minimize the reconstruction error of the linear autoencoder.
-\end{emphbox}
-\item This is proven by noting that in Theorem 4.2 which has a problem of the same form, the error is minimized using the projections of the points on the subspace of interest, thus leading to $f$ and $g$ as the transpose of $U_k$ and $U_k$ itself respectively as they cause this projection.
-
-\end{itemize}
-\end{sectionbox}
 
 \section{Feed forward Neural Networks}
 \begin{sectionbox}
