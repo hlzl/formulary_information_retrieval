@@ -191,9 +191,11 @@ In its simplest form, the kernel trick means transforming data into another dime
     \item If $\kappa_1, \kappa_2$ are Kernels and $c\ge0$, then $c\kappa_1$, $c+\kappa_1$, $\kappa_1+\kappa_2$ and $\kappa_1\cdot\kappa_2$ are kernels as well
 \end{itemize}
 \end{sectionbox}
+\textbf{Notes:}
 
-\begin{sectionbox}
+\newpage
 \section{Principal Component Analysis}
+\begin{sectionbox}
 Assuming distribution of unlabeled raw data is concentrated around some lower-dimensional plane and a projection onto this plane captures most of the variance of the dataset. PCA uses an orthogonal transformation to convert a set of observations of possibly correlated variables into a set of values of linearly uncorrelated variables called principal components.\\
 \subsection{Geometric Interpretation}
 \begin{itemize}
@@ -253,26 +255,38 @@ Theorem 4.2
 
 \end{itemize}
 \end{sectionbox}
+\textbf{Notes:}
 
-
-\section{Kernel-PCA}
+\vspace{300}
+\section{Kernel PCA}
 \begin{sectionbox}
-\subsection{Linear PCA with inner products}
-If $\mathbf{K}=\mathbf{X^TX}$ is the inner product matrix and $\mathbf{X=U\Sigma V^T}$ the SVD of $\mathbf{X}$. Using the eigenvalue decomposition of $\mathbf{K}$, we can write $\mathbf{K=V\Sigma^T\Sigma V^T}$. [$\mathbf{V}$ is orthogonal; $\mathbf{\Sigma^T\Sigma}$ is diagonal]\\
-$\mathbf{V_k}$ and $\mathbf{\Sigma_k}=diag(\sigma_1, \cdots\sigma_k)$ are the first $k$ eigenvectors and eigenvalues of $\mathbf{K}$.
+\subsection{Linear PCA with Inner Products}
+\begin{itemize}
+\item Scores of the input data can be calculated using singular values and the right eigenvector (4.7), which we can obtain using the eigenvalue decomposition of the Gram-Matrix (7.2) and therefore giving us a way to calculate linear PCA scores using the inner product. If we forgot to center the data, use the centred Gram-Matrix instead (7.8).\\
+\hspace{5}[$\mathbf{V}$ is orthogonal; $\mathbf{\Sigma}^T\mathbf{\Sigma}$ is diagonal]
+\item If the input data has not been centred beforehand, we can find the Gram-Matrix for the centred data by noting how input data is usually centred (7.6), factoring out the input matrix (7.7) and then using inner product to compute the Gram-Matrix  corresponding to centred input. (7.8)
+\item Scores for new observations are usually calculated by projecting them onto $U_k$, but if we want to reformulate this to be in terms of the singular value and right singular vectors we can isolate U in the SVD and retain only k columns (7.4a) to arrive at the formulation. (7.4)
+\item If we want to calculate scores for new observations considering centering, we take the formula for raw new observations (7.4), replace the input matrix with a centred input matrix and the observation with an approximated centred observation, resulting in a nice formula involving the Gram-Matrix. (7.9)
 \begin{emphbox}
-    Therefore: $\mathbf{U_k^T}=\mathbf{\Sigma_k^{-1}V_k^TX^T}$ and for a new sample $\mathbf{y}$:\\
-    $\mathbf{U_k^Ty}=\mathbf{\Sigma_k^{-1}V_k^TX^Ty}=\mathbf{\Sigma_k^{-1}V_k^T}\mat{\mathbf{x_1^Ty} & \cdots \mathbf{x_n^Ty}}^T$\\
-    This only requieres the inner product $\mathbf{x_n^Ty=k_y}$
-\end{emphbox}
-If \textbf{X} is not centered, we can center $\mathbf{K}$ without centering \textbf{X}:
-\begin{center}
-    $\mathbf{\tilde{K}=HKH}$ with $\mathbf{H}=(\mathbf{I}_n.\frac{1}{n}\mathds{1}_n\mathds{1}_n^T)$\\
-    For new samples, we have to replace $\mathbf{\tilde{y}}=\mathbf{y}-\frac{1}{n}\mathbf{X}\mathds{1}_n$ and $\mathbf{\tilde{X}=XH}$\\
+    EVD of Gram Matrix (7.2): $\mathbf{K=V\Sigma^T\Sigma V^T}$\\
+    Centered Gram Matrix (7.8): $\mathbf{\tilde{K}=HKH}$ with $\mathbf{H}=(\mathbf{I}_n.\frac{1}{n}\mathds{1}_n\mathds{1}_n^T)$\\
+    Computing scores for new sample $\mathbf{y}$:
     $\mathbf{U_k^T}(\mathbf{\tilde{y}})=\mathbf{\Sigma_k^{-1}V_k^T\tilde{k}_y}$, \quad $\mathbf{\tilde{k}_y=Hk_y-}\frac{1}{n}\mathbf{HK}\mathds{1}_n$
-\end{center}
+\end{emphbox}
+\item With $\mathbf{V_k}$ and $\mathbf{\Sigma_k}=diag(\sigma_1, \cdots\sigma_k)$ are the first $k$ eigenvectors and eigenvalues of $\mathbf{K}$ we can compute the principal components $\mathbf{U}^T_k\mathbf{y}$ by only using inner products.
+\begin{emphbox}
+    $\mathbf{U_k^T}=\mathbf{\Sigma_k^{-1}V_k^TX^T}$ and for a new sample $\mathbf{y}$:\\
+    $\mathbf{U_k^Ty}=\mathbf{\Sigma_k^{-1}V_k^TX^Ty}=\mathbf{\Sigma_k^{-1}V_k^T}\mat{\mathbf{x_1^Ty} & \cdots \mathbf{x_n^Ty}}^T$\\
+    This only requires the inner product $\mathbf{x_n^Ty=k_y}$
+\end{emphbox}
+\end{itemize}
 
 \subsection{Transition to Kernel PCA}
+\begin{itemize}
+\item Kernel PCA requires us to first compute the Gram-Matrix via the kernel (6.1). This can then be substituted for the Gram-Matrix via inner product at various places, such as during centering (7.8) and when performing eigenvalue decomposition (7.2) to calculate matrices for scores (4.7).
+\item The scores for new observations via Kernel PCA is based off the Linear PCA version (7.4), and can be obtained by replacing the linear observation inner products with the kernel observation inner products (as well as ensuring that singular values and right singular vectors obtained from eigenvector decomposition of Gram-Matrix via kernel (7.2)).
+\item Similarly, when considering centering, note the Linear PCA version of scores which consider centering (7.9) and replace the linear Gram-Matrix with the kernel Gram-Matrix as well as the linear observation inner products with the kernel observation inner products. (7.12)
+\end{itemize}
 Instead of replacing the inner product $\mathbf{x^Ty}$ by $\langle\phi(\mathbf{x}),\phi(\mathbf{y})\rangle$, we substitute $\mathbf{x^Ty}\rightarrow\kappa(\mathbf{x,y})$:
 \begin{emphbox}
     $\mathbf{k}^{new}=\mat{kappa(\mathbf{x_1,y}) & \cdots & kappa(\mathbf{x_n,y})}^T$\\
@@ -282,21 +296,23 @@ Instead of replacing the inner product $\mathbf{x^Ty}$ by $\langle\phi(\mathbf{x
 
 \begin{sectionbox}
 \begin{cookbox}{Kernel Principal Component Analysis}
-        \item  for training set $\mathbf{X}=\mat{\mathbf{x}_1 & \cdots &\mathbf{x}_n}, \ \mathbf{x}_1\in\R^p$
-		\item Find suitable Kernel function $\kappa(\cdot)$ and compute Gram Matrix $\mathbf{K}$
-		\item Compute centered Gram Matrix: $\mathbf{\tilde{K}=HKH}$ with\\ $\mathbf{H=I}_n-\frac{1}{n}\mathds{1}_n\mathds{1}_n^T$
-		\item Compute Eigenvalue Decomposition: $\mathbf{\tilde{K}=V\Lambda V^T}$. Because $\mathbf{K}$ is positive semi-definite and therefore the diagonal entries of $\mathbf{\Lambda}$ are non-negative, we write $\mathbf{\Lambda=\Sigma}^2=diag(\sigma_1^2, \cdot, \sigma_n^2)$
-		\item Reduced Matrices: $\mathbf{\Sigma_k}=diag(\sigma_1,\cdots,\sigma_k),\ \in\R^{k\times k}$ and $\mathbf{V}_k\in\R^{n\times k}$
-		\item Reduced Training Data: $\mathbf{S=\Sigma_kV}_k^T$
-		\item For new datapoint $\mathbf{y}\in\R^p$, compute new components: 
-		\begin{center}
-		    $\mathbf{s}_new=\mathbf{\Sigma}_k^{-1}\mathbf{V}_k^T\mathbf{k}_{cent}^{new}$\\
-		    $\mathbf{k}_{cent}^{new}=\mathbf{Hk}_{cent}^{new}-\frac{1}{n}\mathbf{HK}\mathds{1}_n$\\
-		    $\mathbf{k}^{new}=\mat{kappa(\mathbf{x_1,y}) & \cdots & kappa(\mathbf{x_n,y})}^T$
-		\end{center}
-	\end{cookbox}
+    \item  for training set $\mathbf{X}=\mat{\mathbf{x}_1 & \cdots &\mathbf{x}_n}, \ \mathbf{x}_1\in\R^p$
+	\item Find suitable Kernel function $\kappa(\cdot)$ and compute Gram Matrix $\mathbf{K}$
+	\item Compute centered Gram Matrix: $\mathbf{\tilde{K}=HKH}$ with\\ $\mathbf{H=I}_n-\frac{1}{n}\mathds{1}_n\mathds{1}_n^T$
+	\item Compute Eigenvalue Decomposition: $\mathbf{\tilde{K}=V\Lambda V^T}$. Because $\mathbf{K}$ is positive semi-definite and therefore the diagonal entries of $\mathbf{\Lambda}$ are non-negative, we write $\mathbf{\Lambda=\Sigma}^2=diag(\sigma_1^2, \cdot, \sigma_n^2)$
+	\item Reduced Matrices: $\mathbf{\Sigma_k}=diag(\sigma_1,\cdots,\sigma_k),\ \in\R^{k\times k}$ and $\mathbf{V}_k\in\R^{n\times k}$
+	\item Reduced Training Data: $\mathbf{S=\Sigma_kV}_k^T$
+	\item For new datapoint $\mathbf{y}\in\R^p$, compute new components: 
+	\begin{center}
+		$\mathbf{s}_new=\mathbf{\Sigma}_k^{-1}\mathbf{V}_k^T\mathbf{k}_{cent}^{new}$\\
+	    $\mathbf{k}_{cent}^{new}=\mathbf{Hk}_{}^{new}-\frac{1}{n}\mathbf{HK}\mathds{1}_n$\\
+		$\mathbf{k}^{new}=\mat{kappa(\mathbf{x_1,y}) & \cdots & kappa(\mathbf{x_n,y})}^T$
+	\end{center}
+\end{cookbox}
 \end{sectionbox}
+\textbf{Notes:}
 
+\newpage
 \section{Feedforward Neural Networks}
 \begin{sectionbox}
 Minimize any expected loss at the price of training many parameters\\
@@ -351,7 +367,7 @@ $n$ depends on loss function (Output of FNN is input of Loss)
 
 \newpage
 
-\section{Feed forward Neural Networks}
+\section{Feed Forward Neural Networks}
 \begin{sectionbox}
 \subsection{Definitions and Motivation}
 The power behind an FNN is its ability to minimize any kind of expected prediction error, that is, find model parameters that minimize expected loss (5.1). Feed forward neural networks are concatenations of linear functions (5.2) with activation functions (e.g. 5.3), which can be denoted in vector form. This results in the generalized form of an FNN. (5.5)
@@ -376,28 +392,6 @@ We get for the output-layer (L): $\frac{\partial}{\partial\mathbf{W}_l}F=\mathbf
 
 $\frac{\partial}{\partial\mathbf{W}_j}F=\mathbf{J}_L(\mathbf{h}_l)\cdot\mathbf{J}_{\sigma_l}(\mathbf{W_lh_{l-1}})\cdot\mathbf{W_l}\mathbf{J}_{\sigma_{l-1}}(\mathbf{W_{l-1}h_{l-2}})\cdot\mathbf{J}_{l-1}\cdots \mathbf{J}_{mult}(\mathbf{h}_{l-1})$ for the j-th layer
 \end{emphbox}
-\end{sectionbox}
-
-\section{Kernel PCA}
-\begin{sectionbox}
-\subsection{Linear PCA with Inner Products}
-\begin{itemize}
-\item Scores of the input data can be calculated using singular values and the right eigenvector (4.7), which we can obtain using the eigenvalue decomposition of the Gram-Matrix (7.2) and therefore giving us a way to calculate linear PCA scores using the inner product. If we forgot to center the data, use the centred Gram-Matrix instead (7.8).
-
-\item If the input data has not been centred beforehand, we can find the Gram-Matrix for the centred data by noting how input data is usually centred (7.6), factoring out the input matrix (7.7) and then using inner product to compute the Gram-Matrix  corresponding to centred input. (7.8)
-\item Scores for new observations are usually calculated by projecting them onto $U_k$, but if we want to reformulate this to be in terms of the singular value and right singular vectors we can isolate U in the SVD and retain only k columns (7.4a) to arrive at the formulation. (7.4)
-\item If we want to calculate scores for new observations considering centering, we take the formula for raw new observations (7.4), replace the input matrix with a centred input matrix and the observation with an approximated centred observation, resulting in a nice formula involving the Gram-Matrix. (7.9)
-\begin{emphbox}
-    EVD of Gram Matrix (7.2): $\mathbf{K=V\Sigma^T\Sigma V^T}$\\
-    Centered Gram Matrix (7.8): $\mathbf{\tilde{K}=HKH}$ with $\mathbf{H}=(\mathbf{I}_n.\frac{1}{n}\mathds{1}_n\mathds{1}_n^T)$\\
-    Computing scores for new sample $\mathbf{y}$:
-    $\mathbf{U_k^T}(\mathbf{\tilde{y}})=\mathbf{\Sigma_k^{-1}V_k^T\tilde{k}_y}$, \quad $\mathbf{\tilde{k}_y=Hk_y-}\frac{1}{n}\mathbf{HK}\mathds{1}_n$
-\end{emphbox}
-\subsection{Transition to Kernel PCA}
-\item Kernel PCA requires us to first compute the Gram-Matrix via the kernel (6.1). This can then be substituted for the Gram-Matrix via inner product at various places, such as during centering (7.8) and when performing eigenvalue decomposition (7.2) to calculate matrices for scores (4.7).
-\item The scores for new observations via Kernel PCA is based off the Linear PCA version (7.4), and can be obtained by replacing the linear observation inner products with the kernel observation inner products (as well as ensuring that singular values and right singular vectors obtained from eigenvector decomposition of Gram-Matrix via kernel (7.2)).
-\item Similarly, when considering centering, note the Linear PCA version of scores which consider centering (7.9) and replace the linear Gram-Matrix with the kernel Gram-Matrix as well as the linear observation inner products with the kernel observation inner products. (7.12)
-\end{itemize}
 \end{sectionbox}
 
 \section{Support Vector Machines}
