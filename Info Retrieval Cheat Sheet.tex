@@ -27,18 +27,18 @@
 \begin{sectionbox}
 Observation Matrix: $\boldsymbol{X} \subset \R^{pxn}$ with $p$-dimensional random variable and $n$ obeservations ($i$: variable, $j$: observation)\\
 Expected Value $\mu=E[X]\in\R^p$ \\
-Variance $\Sigma=Var(X)=E[(X-\mu)(X-\mu)^T]\in\R^{pxp}$\\
-$\Sigma$ is symmetric ($\Sigma^T = \Sigma$) and positive semidefinite: $\forall x$: $x^T\Sigma x \ge 0\ $ or $\Sigma \ge 0$\\
+Variance $\Sigma=Var(X)=E[(X-\mu)(X-\mu)^{\top}]\in\R^{pxp}$\\
+$\Sigma$ is symmetric ($\Sigma^{\top} = \Sigma$) and positive semidefinite: $\forall x$: $x^{\top}\Sigma x \ge 0\ $ or $\Sigma \ge 0$\\
 Estimated Value based on mean of observations $n$: \\ $\hat{\mu}_p=\frac{1}{n}\sum_{j=1}^nx_{pj}$ (calculate for every dimension $p$)\\
 Centered Observation Matrix $\hat{X}=X-\hat{\mu}\otimes [1\,...\,1]$ \\
-Covariance Matrix $\hat{\Sigma}=\frac{1}{n-1}\hat{X}\hat{X}^T\approx \frac{1}{n}\hat{X}\hat{X}^T$ \\
-Transpose Matrix $(XY)^T=Y^TX^T$\\
+Covariance Matrix $\hat{\Sigma}=\frac{1}{n-1}\hat{X}\hat{X}^{\top}\approx \frac{1}{n}\hat{X}\hat{X}^{\top}$ \\
+Transpose Matrix $(XY)^{\top}=Y^{\top}X^{\top}$\\
 \subsection{Random Variables}
 Probability: $Pr(X\in\mathcal{X})=\int_\mathcal{X}p_X(x)dx=\sum_{\{i|x_i\in\mathcal{X}\}}p_i$\\
 Marginal Density: $p_X(x)=\int_{\R^k}p_{X,Y}(x,y)dy$\\
 Conditional Density: $p_{Y|X=x}(y)=\frac{p_{X,Y}(x,y)}{p_X(x)}$, with $\sum_{y}p_{Y|X=x}(y)=1$ \\
 Expectation Value: $E[X]=\int_{\R^p}xp_X(x)dx=\mu_X$\\
-(Co)Variance: $Var[X]=E[(X-\mu_X)(X-\mu_X)^T$
+(Co)Variance: $Var[X]=E[(X-\mu_X)(X-\mu_X)^{\top}$
 \end{sectionbox}
 
 \section{Statistical Decision Making}
@@ -129,16 +129,16 @@ $f(z) = \left\{ \begin{array}{rcl}
 \item It is clear that we must find an appropriate f  to complete the decision function, and thus we define the global method with the \textbf{misclassification loss} as the problem we need to solve.
 $ \frac{1}{n}\sum\limits_{i=1}^nL_{0,1}(y_i,f(x_i))$
 \item The misclassification loss is extremely difficult to solve due to being non-continuous and non-convex, and so first we need to approximate this function as a convex function since they are easy to optimize.
-\item A convex approximation of misclassification loss is $log(1 + exp(-t))$, which when concatenated with  an affine function $f(\boldsymbol{x})=\boldsymbol{w^Tx}+b$ is also convex, and can therefore be easily optimized via minimization.\\
+\item A convex approximation of misclassification loss is $log(1 + exp(-t))$, which when concatenated with  an affine function $f(\boldsymbol{x})=\boldsymbol{w^{\top}x}+b$ is also convex, and can therefore be easily optimized via minimization.\\
 \begin{center}
 \begin{emphbox}
-    $\min\limits_{\boldsymbol{w}\in\R^n,b\in\R}\frac{1}{n}\sum\limits_{i=1}^nlog(1+exp(-y_i(\boldsymbol{w}^T\boldsymbol{x}_i+b)))$
+    $\min\limits_{\boldsymbol{w}\in\R^n,b\in\R}\frac{1}{n}\sum\limits_{i=1}^nlog(1+exp(-y_i(\boldsymbol{w}^{\top}\boldsymbol{x}_i+b)))$
     \end{emphbox}
 \end{center}
 \item Noting that the loss is in \textbf{negative log-likelihood} form, we can convert this to a probability by taking the exponential of likelihood.
 \begin{emphbox}
     \begin{center}
-        $Pr(Y=y|x)=\frac{1}{1+exp(-y(\boldsymbol{w}^T\boldsymbol{x}+b))}$
+        $Pr(Y=y|x)=\frac{1}{1+exp(-y(\boldsymbol{w}^{\top}\boldsymbol{x}+b))}$
     \end{center}
 \end{emphbox}
 Gradient-based methods can be used to find affine weights $\boldsymbol{w}$ and bias $b$ that solve the optimization problem (\emph{first box}).\\ Classify new sample: $sign(\boldsymbol{w}^{T}\boldsymbol{x}_{new}+b)$.
@@ -148,20 +148,20 @@ Gradient-based methods can be used to find affine weights $\boldsymbol{w}$ and b
 \begin{itemize}
 \item When the samples are linearly separable (\emph{a dividing hyperplane exists}), there is a constraint that the target times the affine output is always greater than zero Under this constraint, no global minimum exists.
 \begin{emphbox}
-    If the data is linearly separable, we can find ($\boldsymbol{w}_s,b_s$) so that: $\forall i:\,y_i(\boldsymbol{w}_s^T\boldsymbol{x}_i+b_s)<0$ \\
+    If the data is linearly separable, we can find ($\boldsymbol{w}_s,b_s$) so that: $\forall i:\,y_i(\boldsymbol{w}_s^{\top}\boldsymbol{x}_i+b_s)<0$ \\
     then the loss-function has no global minimum in $\R^{p+1}$
 \end{emphbox}
 This can be fixed by introducing a regulator which penalizes the magnitude of $(\boldsymbol{w}, b)$, e.g. by fixing a real constant $\lambda>0$ and adjusting the original cost function as  $\hat{F}(\boldsymbol{w}, b)=F(\boldsymbol{w}, b)+\lambda||\boldsymbol{w}||^2+b^2$.
 \end{itemize}
 
 \subsection{Alternative Approach (Statistics)}
-Linear Model: $a = w_0+w_1x_1+...+w_nx_m = \boldsymbol{w}^T\boldsymbol{x}$\\
+Linear Model: $a = w_0+w_1x_1+...+w_nx_m = \boldsymbol{w}^{\top}\boldsymbol{x}$\\
 \begin{tabular}{ll}
     Probability: $\sigma(a)=\frac{1}{1+e^{-a}}$ & $D=\{(\boldsymbol{x}_i,z_i)\}$\\
     Find $\boldsymbol{w}_{MLE}=arg \max\limits_{\boldsymbol{w}} P(D|\boldsymbol{w})$ &  $\boldsymbol{x}_i\in \R^d, z_i\in\{0,1\}$\\
 \end{tabular}
-$P(D|\boldsymbol{w})=\prod\limits_{i=1}^n\sigma(\boldsymbol{w}^T\boldsymbol{x}_i)^{z_i}(1-\sigma(\boldsymbol{w}^T\boldsymbol{x}_i))^{1-z_i}$\\
-$L(\boldsymbol{w})=-log(P(D|\boldsymbol{w}))$, $\nabla_{\boldsymbol{w}}L(\boldsymbol{w})=\boldsymbol{X}(\sigma(\boldsymbol{X}^T\boldsymbol{w})-\boldsymbol{z})$\\
+$P(D|\boldsymbol{w})=\prod\limits_{i=1}^n\sigma(\boldsymbol{w}^{\top}\boldsymbol{x}_i)^{z_i}(1-\sigma(\boldsymbol{w}^{\top}\boldsymbol{x}_i))^{1-z_i}$\\
+$L(\boldsymbol{w})=-log(P(D|\boldsymbol{w}))$, $\nabla_{\boldsymbol{w}}L(\boldsymbol{w})=\boldsymbol{X}(\sigma(\boldsymbol{X}^{\top}\boldsymbol{w})-\boldsymbol{z})$\\
 (Requires Hessian Matrix, which is positive semi-definite)\\
 Results are identical up to the factor 1/n
 \\
@@ -177,15 +177,15 @@ In its simplest form, the kernel trick means transforming data into another dime
 \end{emphbox}
 \begin{itemize}
     \item Symmetric $\forall i,j: \kappa(\mathbf{x}_j,\mathbf{x}_i)=\kappa(\mathbf{x}_j,\mathbf{x}_i)$
-    \item Positive semidefinite $\forall \mathbf{x}$: $\mathbf{x}^T\mathbf{Kx}\ge 0\ $ or all eigenvalues $\ge 0$
+    \item Positive semidefinite $\forall \mathbf{x}$: $\mathbf{x}^{\top}\mathbf{Kx}\ge 0\ $ or all eigenvalues $\ge 0$
     \item We can determine whether a particular function is a kernel by testing for violations of symmetry or positive semidefiniteness.
     Symmetry can easily be tested by substituting named variables into the kernel, then flipping around the variables and seeing whether the kernel expression is the same.
     \item Positive semidefiniteness can be tested as violated by definition, or if any diagonal values are ever negative. Furthermore, if the determinant of a matrix is negative it is definitely not positive semidefinite (since positive semidefinite eigenvalues are non-negative and the determinant is the product of the eigenvalues), but we cannot say anything if the determinant is positive.
 \end{itemize}
 \subsection{Common Kernels and Rules}
 \begin{itemize}
-    \item Linear kernel: $\kappa(\mathbf{x,y})=\mathbf{x^Ty}+c, \ c\ge0$
-    \item Polynomial Kernel $\kappa(\mathbf{x,y})=(a\mathbf{x^Ty}+c)^d,\ a,c,d\ge0 $
+    \item Linear kernel: $\kappa(\mathbf{x,y})=\mathbf{x^{\top}y}+c, \ c\ge0$
+    \item Polynomial Kernel $\kappa(\mathbf{x,y})=(a\mathbf{x^{\top}y}+c)^d,\ a,c,d\ge0 $
     \item Gaussian Kernel $\kappa(\mathbf{x,y})=exp(-\frac{||\mathbf{x-y}||^2}{2\sigma^2})$, $\sigma>0$
     \item Exponential Kernel $\kappa(\mathbf{x,y})=exp(-\frac{||\mathbf{x-y}||^2}{2\sigma})$, $\sigma>0$
     \item If $\kappa_1, \kappa_2$ are Kernels and $c\ge0$, then $c\kappa_1$, $c+\kappa_1$, $\kappa_1+\kappa_2$ and $\kappa_1\cdot\kappa_2$ are kernels as well
@@ -199,23 +199,23 @@ In its simplest form, the kernel trick means transforming data into another dime
 Assuming distribution of unlabeled raw data is concentrated around some lower-dimensional plane and a projection onto this plane captures most of the variance of the dataset. PCA uses an orthogonal transformation to convert a set of observations of possibly correlated variables into a set of values of linearly uncorrelated variables called principal components.\\
 \subsection{Geometric Interpretation}
 \begin{itemize}
-\item Imagining that $x$ is a vector in $p$ dimensions, and $U_k$ describes a lower dimensional subspace, then the coordinates of $x$ projected onto $U_k$ is found by first obtaining the scores of $x$ along $U_k$ and then taking the linear combination of these scores and the $U_k$ vectors: $\pi_\mathcal{U}(\boldsymbol{x})=\boldsymbol{U}_k\boldsymbol{U}_k^T\boldsymbol{x}, \ \boldsymbol{U}_k\in\R^{p\times k}$
+\item Imagining that $x$ is a vector in $p$ dimensions, and $U_k$ describes a lower dimensional subspace, then the coordinates of $x$ projected onto $U_k$ is found by first obtaining the scores of $x$ along $U_k$ and then taking the linear combination of these scores and the $U_k$ vectors: $\pi_\mathcal{U}(\boldsymbol{x})=\boldsymbol{U}_k\boldsymbol{U}_k^{\top}\boldsymbol{x}, \ \boldsymbol{U}_k\in\R^{p\times k}$
 \item We want to find a $U_k$ that captures most of the variance in the dataset, which is equivalent to finding a hyperplane where the difference between the original data points and their projections are minimized, thus forming our problem for optimization.\\
 \begin{center}
-    $J(\boldsymbol{U}_k)=\sum\limits_{i=1}^n||\boldsymbol{x}_i-\boldsymbol{U}_k\boldsymbol{U}_k^T\boldsymbol{x}_i||^2_2$
+    $J(\boldsymbol{U}_k)=\sum\limits_{i=1}^n||\boldsymbol{x}_i-\boldsymbol{U}_k\boldsymbol{U}_k^{\top}\boldsymbol{x}_i||^2_2$
 \end{center}
-\item The dataset can be represented as the dot product of an orthonormal matrix, a diagonal matrix and another orthonormal matrix via singular value decomposition: $\boldsymbol{X}=\boldsymbol{UDV}^T$.
+\item The dataset can be represented as the dot product of an orthonormal matrix, a diagonal matrix and another orthonormal matrix via singular value decomposition: $\boldsymbol{X}=\boldsymbol{UDV}^{\top}$.
 \end{itemize}
 \begin{emphbox}
     The first $k$ columns of the first orthonormal matrix via SVD $\boldsymbol{U}_k$ minimizes the difference between data points and their projections, and the corresponding covariance matrix of the scores is diagonal (= features are uncorrelated).
 \end{emphbox}
 \begin{itemize}
-\item The \emph{empirical covariance matrix} or \emph{Score Matrix} of the reduced $k$ variables $\boldsymbol{S}=\boldsymbol{U}_k^T\boldsymbol{X}$ is diagonal, i.e. the features extracted by the PCA are uncorrelated.       \hspace{20} [$cov(\boldsymbol{S})=\frac{1}{n}\boldsymbol{S}\boldsymbol{S}^T$]\\
+\item The \emph{empirical covariance matrix} or \emph{Score Matrix} of the reduced $k$ variables $\boldsymbol{S}=\boldsymbol{U}_k^{\top}\boldsymbol{X}$ is diagonal, i.e. the features extracted by the PCA are uncorrelated.       \hspace{20} [$cov(\boldsymbol{S})=\frac{1}{n}\boldsymbol{S}\boldsymbol{S}^{\top}$]\\
 $s_{ij}$: j-th score of the i-th principal component
 \item $U_k$ is the Loading Matrix give by $k$ left-singular vectors of the SVD of $\boldsymbol{\hat{X}}$.
-\item $\boldsymbol{S}$ can directly be obtained by the SVD with $\boldsymbol{S}=\boldsymbol{D}_k\boldsymbol{V}_k^T$. As $\boldsymbol{D_k}$ is diagonal and $\boldsymbol{V}_k^T$ only has $k$-rows, this only requires $nk$ operations instead of non-feasible $(2p-1)nk$ operations.
-\item \emph{Dimensions}:\\ $X\in\R^{m\times n}$, $U\in\R^{m\times m}$, $D\in\R^{m\times n}$, $V^T\in\R^{n\times n}$, $U_k\in\R^{k\times n}$, $X_k\in\R^{k\times n}$, $m$: Dimension variable, $n$: samples
-\item The eigenvectors of $\mathbf{X}\mathbf{X}^T$ are the loadings of $\mathbf{X}$ only if $\mathbf{X}$ is centered.
+\item $\boldsymbol{S}$ can directly be obtained by the SVD with $\boldsymbol{S}=\boldsymbol{D}_k\boldsymbol{V}_k^{\top}$. As $\boldsymbol{D_k}$ is diagonal and $\boldsymbol{V}_k^{\top}$ only has $k$-rows, this only requires $nk$ operations instead of non-feasible $(2p-1)nk$ operations.
+\item \emph{Dimensions}:\\ $X\in\R^{m\times n}$, $U\in\R^{m\times m}$, $D\in\R^{m\times n}$, $V^{\top}\in\R^{n\times n}$, $U_k\in\R^{k\times n}$, $X_k\in\R^{k\times n}$, $m$: Dimension variable, $n$: samples
+\item The eigenvectors of $\mathbf{X}\mathbf{X}^{\top}$ are the loadings of $\mathbf{X}$ only if $\mathbf{X}$ is centered.
 \end{itemize}
 
 \subsection{Proof}
@@ -227,12 +227,12 @@ We can show that the scores are uncorrelated by showing that the dot product bet
 \end{itemize}
 
 \subsection{Statistical Interpretation}
-The idea behind the statistical interpretation is that covariance matrices are symmetric positive semidefinite, and therefore there exists some matrix $U$ which can diagonalize it (clearly illustrated using the eigenvalue decomposition). I.e. $Y=\boldsymbol{U}^TX$ with $\boldsymbol{U}^T\boldsymbol{U}=I_p$, such that the covariance matrix of $Y$ is diagonal and the variances decrease. In the same way:
+The idea behind the statistical interpretation is that covariance matrices are symmetric positive semidefinite, and therefore there exists some matrix $U$ which can diagonalize it (clearly illustrated using the eigenvalue decomposition). I.e. $Y=\boldsymbol{U}^{\top}X$ with $\boldsymbol{U}^{\top}\boldsymbol{U}=I_p$, such that the covariance matrix of $Y$ is diagonal and the variances decrease. In the same way:
 \begin{emphbox}
-        $\boldsymbol{D}=\boldsymbol{U}^Tvar(X)\boldsymbol{U} $
-        $= \mathbb{E}[\boldsymbol{U}^T(x-\mu_x)(X-\mu_x)^T\boldsymbol{U}]$
-        $=\mathbb{E}[(\boldsymbol{U}^TX-\boldsymbol{U}^T\mu_x)(\boldsymbol{U}^TX-\boldsymbol{U}^T\mu_x)^T]$
-        $=\mathbb{E}[(Y-\mu_y)(Y-\mu_y)^T=var(Y)$
+        $\boldsymbol{D}=\boldsymbol{U}^{\top}var(X)\boldsymbol{U} $
+        $= \mathbb{E}[\boldsymbol{U}^{\top}(x-\mu_x)(X-\mu_x)^{\top}\boldsymbol{U}]$
+        $=\mathbb{E}[(\boldsymbol{U}^{\top}X-\boldsymbol{U}^{\top}\mu_x)(\boldsymbol{U}^{\top}X-\boldsymbol{U}^{\top}\mu_x)^{\top}]$
+        $=\mathbb{E}[(Y-\mu_y)(Y-\mu_y)^{\top}=var(Y)$
 \end{emphbox}
 \end{sectionbox}
 
@@ -249,7 +249,7 @@ Theorem 4.2
     \item Autoencoders map an input to low dimensional space using a function $f$, which is then mapped back to a higher dimensional space using a function $g$ and can approximate the input $g\circ f(\boldsymbol{x_i})\approx\boldsymbol{x_i}$
 \item Letting $f$ and $g$ be linear mappings represented by matrices, the reconstruction error $J(\textbf{W,V})=\sum_{i=1}^n||\boldsymbol{x_i-WVx_i}||^2$ is minimised by setting $f$ as the transpose of $U_k$ and $g$ as $U_k$.
 \begin{emphbox}
-    Let \textbf{$U_k$} be the first $k$ left singular vectors of observation matrix \textbf{X}, the $\textbf{V}=\textbf{U}_k^T$ and $\textbf{W}=\textbf{U}_k$ minimize the reconstruction error of the linear autoencoder.
+    Let \textbf{$U_k$} be the first $k$ left singular vectors of observation matrix \textbf{X}, the $\textbf{V}=\textbf{U}_k^{\top}$ and $\textbf{W}=\textbf{U}_k$ minimize the reconstruction error of the linear autoencoder.
 \end{emphbox}
 \item This is proven by noting that in Theorem 4.2 which has a problem of the same form, the error is minimized using the projections of the points on the subspace of interest, thus leading to $f$ and $g$ as the transpose of $U_k$ and $U_k$ itself respectively as they cause this projection.
 
@@ -263,21 +263,21 @@ Theorem 4.2
 \subsection{Linear PCA with Inner Products}
 \begin{itemize}
 \item Scores of the input data can be calculated using singular values and the right eigenvector (4.7), which we can obtain using the eigenvalue decomposition of the Gram-Matrix (7.2) and therefore giving us a way to calculate linear PCA scores using the inner product. If we forgot to center the data, use the centred Gram-Matrix instead (7.8).\\
-\hspace{5}[$\mathbf{V}$ is orthogonal; $\mathbf{\Sigma}^T\mathbf{\Sigma}$ is diagonal]
+\hspace{5}[$\mathbf{V}$ is orthogonal; $\mathbf{\Sigma}^{\top}\mathbf{\Sigma}$ is diagonal]
 \item If the input data has not been centred beforehand, we can find the Gram-Matrix for the centred data by noting how input data is usually centred (7.6), factoring out the input matrix (7.7) and then using inner product to compute the Gram-Matrix  corresponding to centred input. (7.8)
 \item Scores for new observations are usually calculated by projecting them onto $U_k$, but if we want to reformulate this to be in terms of the singular value and right singular vectors we can isolate U in the SVD and retain only k columns (7.4a) to arrive at the formulation. (7.4)
 \item If we want to calculate scores for new observations considering centering, we take the formula for raw new observations (7.4), replace the input matrix with a centred input matrix and the observation with an approximated centred observation, resulting in a nice formula involving the Gram-Matrix. (7.9)
 \begin{emphbox}
-    EVD of Gram Matrix (7.2): $\mathbf{K=V\Sigma^T\Sigma V^T}$\\
-    Centered Gram Matrix (7.8): $\mathbf{\tilde{K}=HKH}$ with $\mathbf{H}=(\mathbf{I}_n.\frac{1}{n}\mathds{1}_n\mathds{1}_n^T)$\\
+    EVD of Gram Matrix (7.2): $\mathbf{K=V\Sigma^{\top}\Sigma V^{\top}}$\\
+    Centered Gram Matrix (7.8): $\mathbf{\tilde{K}=HKH}$ with $\mathbf{H}=(\mathbf{I}_n.\frac{1}{n}\mathds{1}_n\mathds{1}_n^{\top})$\\
     Computing scores for new sample $\mathbf{y}$:
-    $\mathbf{U_k^T}(\mathbf{\tilde{y}})=\mathbf{\Sigma_k^{-1}V_k^T\tilde{k}_y}$, \quad $\mathbf{\tilde{k}_y=Hk_y-}\frac{1}{n}\mathbf{HK}\mathds{1}_n$
+    $\mathbf{U_k^{\top}}(\mathbf{\tilde{y}})=\mathbf{\Sigma_k^{-1}V_k^{\top}\tilde{k}_y}$, \quad $\mathbf{\tilde{k}_y=Hk_y-}\frac{1}{n}\mathbf{HK}\mathds{1}_n$
 \end{emphbox}
-\item With $\mathbf{V_k}$ and $\mathbf{\Sigma_k}=diag(\sigma_1, \cdots\sigma_k)$ are the first $k$ eigenvectors and eigenvalues of $\mathbf{K}$ we can compute the principal components $\mathbf{U}^T_k\mathbf{y}$ by only using inner products.
+\item With $\mathbf{V_k}$ and $\mathbf{\Sigma_k}=diag(\sigma_1, \cdots\sigma_k)$ are the first $k$ eigenvectors and eigenvalues of $\mathbf{K}$ we can compute the principal components $\mathbf{U}^{\top}_k\mathbf{y}$ by only using inner products.
 \begin{emphbox}
-    $\mathbf{U_k^T}=\mathbf{\Sigma_k^{-1}V_k^TX^T}$ and for a new sample $\mathbf{y}$:\\
-    $\mathbf{U_k^Ty}=\mathbf{\Sigma_k^{-1}V_k^TX^Ty}=\mathbf{\Sigma_k^{-1}V_k^T}\mat{\mathbf{x_1^Ty} & \cdots \mathbf{x_n^Ty}}^T$\\
-    This only requires the inner product $\mathbf{x_n^Ty=k_y}$
+    $\mathbf{U_k^{\top}}=\mathbf{\Sigma_k^{-1}V_k^{\top}X^{\top}}$ and for a new sample $\mathbf{y}$:\\
+    $\mathbf{U_k^{\top}y}=\mathbf{\Sigma_k^{-1}V_k^{\top}X^{\top}y}=\mathbf{\Sigma_k^{-1}V_k^{\top}}\mat{\mathbf{x_1^{\top}y} & \cdots \mathbf{x_n^{\top}y}}^{\top}$\\
+    This only requires the inner product $\mathbf{x_n^{\top}y=k_y}$
 \end{emphbox}
 \end{itemize}
 
@@ -287,9 +287,9 @@ Theorem 4.2
 \item The scores for new observations via Kernel PCA is based off the Linear PCA version (7.4), and can be obtained by replacing the linear observation inner products with the kernel observation inner products (as well as ensuring that singular values and right singular vectors obtained from eigenvector decomposition of Gram-Matrix via kernel (7.2)).
 \item Similarly, when considering centering, note the Linear PCA version of scores which consider centering (7.9) and replace the linear Gram-Matrix with the kernel Gram-Matrix as well as the linear observation inner products with the kernel observation inner products. (7.12)
 \end{itemize}
-Instead of replacing the inner product $\mathbf{x^Ty}$ by $\langle\phi(\mathbf{x}),\phi(\mathbf{y})\rangle$, we substitute $\mathbf{x^Ty}\rightarrow\kappa(\mathbf{x,y})$:
+Instead of replacing the inner product $\mathbf{x^{\top}y}$ by $\langle\phi(\mathbf{x}),\phi(\mathbf{y})\rangle$, we substitute $\mathbf{x^{\top}y}\rightarrow\kappa(\mathbf{x,y})$:
 \begin{emphbox}
-    $\mathbf{k}^{new}=\mat{kappa(\mathbf{x_1,y}) & \cdots & kappa(\mathbf{x_n,y})}^T$\\
+    $\mathbf{k}^{new}=\mat{kappa(\mathbf{x_1,y}) & \cdots & kappa(\mathbf{x_n,y})}^{\top}$\\
     $\mathbf{k}_{cent}^{new}=\mathbf{Hk}_{}^{new}-\frac{1}{n}\mathbf{HK}\mathds{1}_n$
 \end{emphbox}
 \end{sectionbox}
@@ -298,15 +298,15 @@ Instead of replacing the inner product $\mathbf{x^Ty}$ by $\langle\phi(\mathbf{x
 \begin{cookbox}{Kernel Principal Component Analysis}
     \item  for training set $\mathbf{X}=\mat{\mathbf{x}_1 & \cdots &\mathbf{x}_n}, \ \mathbf{x}_1\in\R^p$
 	\item Find suitable Kernel function $\kappa(\cdot)$ and compute Gram Matrix $\mathbf{K}$
-	\item Compute centered Gram Matrix: $\mathbf{\tilde{K}=HKH}$ with\\ $\mathbf{H=I}_n-\frac{1}{n}\mathds{1}_n\mathds{1}_n^T$
-	\item Compute Eigenvalue Decomposition: $\mathbf{\tilde{K}=V\Lambda V^T}$. Because $\mathbf{K}$ is positive semi-definite and therefore the diagonal entries of $\mathbf{\Lambda}$ are non-negative, we write $\mathbf{\Lambda=\Sigma}^2=diag(\sigma_1^2, \cdot, \sigma_n^2)$
+	\item Compute centered Gram Matrix: $\mathbf{\tilde{K}=HKH}$ with\\ $\mathbf{H=I}_n-\frac{1}{n}\mathds{1}_n\mathds{1}_n^{\top}$
+	\item Compute Eigenvalue Decomposition: $\mathbf{\tilde{K}=V\Lambda V^{\top}}$. Because $\mathbf{K}$ is positive semi-definite and therefore the diagonal entries of $\mathbf{\Lambda}$ are non-negative, we write $\mathbf{\Lambda=\Sigma}^2=diag(\sigma_1^2, \cdot, \sigma_n^2)$
 	\item Reduced Matrices: $\mathbf{\Sigma_k}=diag(\sigma_1,\cdots,\sigma_k),\ \in\R^{k\times k}$ and $\mathbf{V}_k\in\R^{n\times k}$
-	\item Reduced Training Data: $\mathbf{S=\Sigma_kV}_k^T$
+	\item Reduced Training Data: $\mathbf{S=\Sigma_kV}_k^{\top}$
 	\item For new datapoint $\mathbf{y}\in\R^p$, compute new components: 
 	\begin{center}
-		$\mathbf{s}_new=\mathbf{\Sigma}_k^{-1}\mathbf{V}_k^T\mathbf{k}_{cent}^{new}$\\
+		$\mathbf{s}_new=\mathbf{\Sigma}_k^{-1}\mathbf{V}_k^{\top}\mathbf{k}_{cent}^{new}$\\
 	    $\mathbf{k}_{cent}^{new}=\mathbf{Hk}_{}^{new}-\frac{1}{n}\mathbf{HK}\mathds{1}_n$\\
-		$\mathbf{k}^{new}=\mat{kappa(\mathbf{x_1,y}) & \cdots & kappa(\mathbf{x_n,y})}^T$
+		$\mathbf{k}^{new}=\mat{kappa(\mathbf{x_1,y}) & \cdots & kappa(\mathbf{x_n,y})}^{\top}$
 	\end{center}
 \end{cookbox}
 \end{sectionbox}
@@ -333,76 +333,53 @@ The gradients can be calculated via chain rule through each subsequent layer, or
      \sigma'(x_i) & \mbox{if}
 & i=j \\ 0 & & \mbox{else}\\
 \end{array}\right.$ (5.7)\\
-$\mathbf{J}_{mult}(x)=diag(\mathbf{x}^T)\in\R^{m\times mn}$ (5.10), doesn't depent on\\
+$\mathbf{J}_{mult}(x)=diag(\mathbf{x}^{\top})\in\R^{m\times mn}$ (5.10), doesn't depent on\\
 With $\mathbf{h}_j=\sigma_j\circ\varphi_\mathbf{W_j}\circ\cdots\circ\sigma_1\circ\varphi_{\mathbf{W_1}}(\mathbf{x})$ the j-th output\\
 We get for the output-layer (L): $\frac{\partial}{\partial\mathbf{W}_l}F=\mathbf{J}_L(\mathbf{h}_l)\cdot\mathbf{J}_{\sigma_l}(\mathbf{W_lh_{l-1}})\cdot\mathbf{J}_{mult}(\mathbf{h}_{l-1})$\\
 
 $\frac{\partial}{\partial\mathbf{W}_j}F=\mathbf{J}_L(\mathbf{h}_l)\cdot\mathbf{J}_{\sigma_l}(\mathbf{W_lh_{l-1}})\cdot\mathbf{W_l}\mathbf{J}_{\sigma_{l-1}}(\mathbf{W_{l-1}h_{l-2}})\cdot\mathbf{J}_{l-1}\cdots \mathbf{J}_{mult}(\mathbf{h}_{l-1})$ for the j-th layer
 \end{emphbox}
 \end{sectionbox}
+\textbf{Notes:}
 
-\section{Support Vector Machine (Basic Linear SVM)}
-\begin{sectionbox}
-    \begin{itemize}
-        \item Idea: Find hyperplane to divide $\boldsymbol{x}, y$ into two subspaces
-        \item Hyperplane: $\mathcal{H}_{\boldsymbol{w},b}=\{x\in \mathbb{R}^p | \boldsymbol{w^Tx}-b=0\}$, $\boldsymbol{w}$ normal to $\mathcal{H}$
-        \item Signed distance from $\boldsymbol{x}$ to $\mathcal{H}_{\boldsymbol{w},b}$: $\delta(\boldsymbol{x}, \mathcal{H}_{\boldsymbol{w},b})=\frac{\boldsymbol{w^Tx}-b}{||\boldsymbol{w}||}$
-        \item Goal: Find $y_i(\boldsymbol{w^Tx_i}-b)\ge 1\quad \forall i \in 1,...,N$
-        \item Optimization Problem: $min \frac{1}{2}||\boldsymbol{w}||^2$ that fulfills Goal
-    \end{itemize}
-    \subsection{Karush Kuhn Tucker Conditions and Linear SVMs}
-    \begin{emphbox}
-    		$\min\limits_{\boldsymbol{w}, b, \boldsymbol{\lambda}\ge0} L(\boldsymbol{w}, b, \boldsymbol{\lambda})$ \\ 
-    		$L(\boldsymbol{w}, b, \boldsymbol{\lambda})= \frac{1}{2}||\boldsymbol{w}||^2 - \sum\limits_i \lambda_i y_i(\boldsymbol{w^Tx_i}-b)+\lambda_i $\\
-    		$\nabla_{(\boldsymbol{w},b)}L(\boldsymbol{w}, b, \boldsymbol{\lambda})=\mat{\boldsymbol{w}-\sum_i\lambda_iy_i\boldsymbol{x}_i \\ \sum_i \lambda_iy_i}$\\
-			$\boldsymbol{w^*}=\sum_i\lambda^*_iy_i\boldsymbol{x}_i$  \quad $\sum_i \lambda^*_iy_i = 0$\\
-			$L_D(\boldsymbol{\lambda})=\sum_i\lambda_i-\frac{1}{2}\boldsymbol{\lambda^TH\lambda}$ \quad With $h_{ij}=y_iy_x\boldsymbol{x_i^Tx_j}$\\
-			New convex quadratic opt problem: $\boldsymbol{\lambda^*}=\max\limits_{\boldsymbol{\lambda}}L_D(\boldsymbol{\lambda})$
-	\end{emphbox}
-	\begin{itemize}
-	    \item Problem is strictly convex, therefore solution is unique
-	    \item If $\lambda_i \ne 0$, then $\boldsymbol{x_i}$ is support vector (Lies in or on margin)
-	    \item Only works, if classes can be linearly separated 
-	    \item Else: Kernel/Soft Margin SVM required
-	    \item SVM works better when (nearly) separable than LR
-	    \item SVM is preferred when using kernels compared to LR
-	\end{itemize}
-\end{sectionbox}
-
-
+\vspace{200}
 \section{Support Vector Machines}
 \begin{sectionbox}
-\begin{itemize}
 \subsection{Geometry}
-\item For some vector w, an affine hyperplane is described as the set of points x that can be projected onto w and then shifted by some constant b to equal zero. (8.1)
-\item The vector w is normal to the hyperplane (8.1) since a vector of any direction in the hyperplane projected onto w has a magnitude of zero. (8.2)
-\item The signed distance from any point to a hyperplane is defined as in (8.3), and can be interpreted as the distance from the hyperplane to the point x. It is formulated by first projecting x onto w and then centering the number line at b to obtain the signed value of x in the decision perspective (denote this as the decision distance). Then this value is divided by the magnitude of w to obtain the signed distance. Note that -b denotes the decision distance to the origin, and the magnitude of w is a scaling factor used to shift between the decision distance and signed distance.
+Idea: Find hyperplane to divide $x, y$ into two subspaces
+\begin{itemize}
+\item For some vector $w$, an affine hyperplane is described as the set of points x that can be projected onto w and then shifted by some constant b to equal zero. (8.1)
+\item The vector $w$ is normal to the hyperplane (8.1) since a vector of any direction in the hyperplane projected onto $w$ has a magnitude of zero. (8.2)
+\item The signed distance from any point to a hyperplane is defined as in (8.3), and can be interpreted as the distance from the hyperplane to the point $x$. It is formulated by first projecting $x$ onto $w$ and then centering the number line at $b$ to obtain the signed value of $x$ in the decision perspective (denote this as the decision distance). Then this value is divided by the magnitude of w to obtain the signed distance. Note that $-b$ denotes the decision distance to the origin, and the magnitude of $w$ is a scaling factor used to shift between the decision distance and signed distance.
 \begin{emphbox}
-    Hyperplane:$\mathcal{H}_{\boldsymbol{w},b}=\{x\in \mathbb{R} | \boldsymbol{w^Tx}-b=0\}$ (8.1)\\
-    \textbf{w} is normal to $\mathcal{H}$: $\mathbf{w}^T(\mathbf{x_1-x_2})=0$ (8.2)\\
-    Signed Distance: $\delta(\boldsymbol{x}, \mathcal{H}_{\boldsymbol{w},b})=\frac{\boldsymbol{w^Tx}-b}{||\boldsymbol{w}||}$ (8.3)\\
-    Margin:$\mathcal{H}_{+}=\{x\in \mathbb{R} | \boldsymbol{w^Tx}-b=1\}$ $\mathcal{H}_{-}=\{x\in \mathbb{R} | \boldsymbol{w^Tx}-b=-1\}$ (8.8-9)
-    
+    Hyperplane:$\mathcal{H}_{\boldsymbol{w},b}=\{x\in \mathbb{R} | \boldsymbol{w}^{\top}\mathbf{x}-b=0\}$ (8.1)\\
+    $w$ is normal to $\mathcal{H}$: $\mathbf{w}^{\top}(\mathbf{x}_1-\mathbf{x}_2)=0$ (8.2)\\
+    Signed Distance: $\delta(\boldsymbol{x}, \mathcal{H}_{\boldsymbol{w},b})=\frac{\boldsymbol{w^{\top}x}-b}{||\boldsymbol{w}||}$ (8.3)\\
+    Margin:$\mathcal{H}_{+}=\{x\in \mathbb{R} | \boldsymbol{w}^{\top}\mathbf{x}-b=1\}$ $\mathcal{H}_{-}=\{x\in \mathbb{R} | \boldsymbol{w}^{\top}\mathbf{x}-b=-1\}$ (8.8-9)
 \end{emphbox}
 \item The decision perspective can be imagined as the perspective where classification decisions are made, all depending on the decision distance.
 \item The positive margin is defined as the hyperplane with a decision distance of 1 (8.8), and the negative margin is defined as the hyperplane with a decision distance of -1 (8.9).
+\end{itemize}
+
 \subsection{Basic Linear SVM}
-\item The aim of Linear SVM is to linearly separate data using the margins of the hyperplanes, such that all positively labelled data is bounded by the positive margin and all negatively labelled data is bounded by the negative margin. In other words, all positively labelled data has a decision distance greater than or equal to 1, and all negatively labelled data has a decision distance less than or equal to -1, resulting in a separation constraint for w and b. (8.12)
-\item We define the best w and b as the ones that have the widest margin, i.e. the widest distance between the hyperplanes. This width his calculated by the sum of the signed distance from the positive margin to the hyperplane and the signed distance from the hyperplane to the negative margin (8.13), which we can then maximize subject to our separation constraint (8.12). \item Flipping around the numerator and denominator of the width, this becomes a minimization problem (8.14).
+\begin{itemize}
+\item The aim of Linear SVM is to linearly separate data using the margins of the hyperplanes, such that all positively labelled data is bounded by the positive margin and all negatively labelled data is bounded by the negative margin. In other words, all positively labelled data has a decision distance greater than or equal to 1, and all negatively labelled data has a decision distance less than or equal to -1, resulting in a separation constraint for $w$ and $b$. (8.12)
+\item We define the best $w$ and $b$ as the ones that have the widest margin, i.e. the widest distance between the hyperplanes. This width his calculated by the sum of the signed distance from the positive margin to the hyperplane and the signed distance from the hyperplane to the negative margin (8.13), which we can then maximize subject to our separation constraint (8.12). 
+\item Flipping around the numerator and denominator of the width, this becomes a minimization problem (8.14).
 \begin{emphbox}
-    Conditions: $\mathbf{w^Tx}_i-b\ge +1 \ \mbox{for } y_i=
-    1$ and $\mathbf{w^Tx}_i-b\ge -1 \ \mbox{for } y_i=
+    Conditions: $\mathbf{w^{\top}x}_i-b\ge +1 \ \mbox{for } y_i=
+    1$ and $\mathbf{w^{\top}x}_i-b\ge -1 \ \mbox{for } y_i=
     -1$\\
-    Compact: $y_i\cdot(\mathbf{w^Tx}_i-b)\ge1 \ \forall i$ (8.12)
-    Minimization: $\min\limits_\mathbf{w}\frac{1}{2}||\mathbf{w}||^2_2 \ \mbox{s.t.} \ y_i(\mathbf{w^Tx}_i-b)\ge1 \ \forall i$
+    Compact: $y_i\cdot(\mathbf{w^{\top}x}_i-b)\ge1 \ \forall i$ (8.12)
+    Minimization: $\min\limits_\mathbf{w}\frac{1}{2}||\mathbf{w}||^2_2 \ \mbox{s.t.} \ y_i(\mathbf{w^{\top}x}_i-b)\ge1 \ \forall i$
 \end{emphbox}
 \end{itemize}
 \end{sectionbox}
 
 \begin{sectionbox}
+\subsection{Karush-Kuhn Tucker Conditions}
 \begin{itemize}
-\subsection{KKT and Lagrangian Duality}
-\item The Karush-Kuhn Tucker conditions says that a minimisation problem with a set of equality and inequality constraints (8.15) can be reformulated as a Lagrangian primal (8.16) with some KKT conditions (Theorem 8.2), such that for convex objective functions with a convex feasible region (like that defined 8.14) minimising the primal (8.16) is equivalent to minimising the original problem (8.15).
+\item The KKT conditions say that a minimisation problem with a set of equality and inequality constraints (8.15) can be reformulated as a Lagrangian primal (8.16) with some KKT conditions (Theorem 8.2), such that for convex objective functions with a convex feasible region (like that defined 8.14) minimising the primal (8.16) is equivalent to minimising the original problem (8.15).
 \begin{emphbox}
     For a optimization problem with $\mathcal{E}$ and $\mathcal{I}$ as \emph{equality and inequality constraints} (8.15):\\
     $\min\limits_{\mathbf{z}\in\R^n}f(\mathbf{z}) \ \mbox{s.t. } c_i(\mathbf{z}) = 0 \ \forall i\in\mathcal{E} \ \mbox{and s.t. } c_j(\mathbf{z}) \ge 0 \ \forall j\in\mathcal{I}$\\
@@ -418,26 +395,35 @@ $\frac{\partial}{\partial\mathbf{W}_j}F=\mathbf{J}_L(\mathbf{h}_l)\cdot\mathbf{J
     \end{itemize}
 \end{emphbox}
 \item The convex primal function (8.16) can then be reformulated as a concave dual function (8.22) by taking the infimum of the primal function. The infimum is the set of points along which the function is minimized w.r.t. the non-Lagrangian multiplier variables. Then by maximizing the primal subject to its constraints (8.22a) we obtain a lower bound for the solution to the primal (weak duality) or when some conditions are satisfied (such as in SVM) this coincides with the solution to the primal (strong duality).
+\end{itemize}
+
 \subsection{Linear SVM via Lagrangian Duality}
+\begin{itemize}
 \item SVM via Lagrangian duality follows the process specified above. The original problem is as in (8.14), the Lagrangian primal is as in (8.23 to 8.25) and the KKT conditions are as in (8.26 to 8.29). 
 \begin{emphbox}
-    Problem: $\min\limits_{\boldsymbol{w}, b, \boldsymbol{\lambda}\ge0} L(\boldsymbol{w}, b, \boldsymbol{\lambda})$ \\  $L(\boldsymbol{w}, b, \boldsymbol{\lambda})= \frac{1}{2}||\boldsymbol{w}||^2 - \sum\limits_i \lambda_i y_i(\boldsymbol{w^Tx_i}-b)+\lambda_i $\\
+    Problem: $\min\limits_{\boldsymbol{w}, b, \boldsymbol{\lambda}\ge0} L(\boldsymbol{w}, b, \boldsymbol{\lambda})$ \\  $L(\boldsymbol{w}, b, \boldsymbol{\lambda})= \frac{1}{2}||\boldsymbol{w}||^2 - \sum\limits_i \lambda_i y_i(\boldsymbol{w^{\top}x_i}-b)+\lambda_i $\\
     		$\nabla_{(\boldsymbol{w},b)}L(\boldsymbol{w}, b, \boldsymbol{\lambda})=\mat{\boldsymbol{w}-\sum_i\lambda_iy_i\boldsymbol{x}_i \\ \sum_i \lambda_iy_i}$\\
     KKT Conditions:\\ $\mathbf{w^*}-\sum_i\lambda_i^*y_ix_i=0$, \quad $\sum_i\lambda^*_iy_i=0$\\
     $\lambda_i^*(y_i(w^{*T}x_i-b^*)-1=0$\\
     Returns: \\
     $\min\limits_{\boldsymbol{w}, b, \boldsymbol{\lambda}\ge0} L(\boldsymbol{w}, b, \boldsymbol{\lambda})=L_D(\mathbf{\lambda})=
-    \sum\limits_i\lambda_i-\frac{1}{2}\sum\limits_{i,j}\lamda_i\lambda_jy_iy_j\mathbf{x_i^Tx_j}$ s.t. $\lambda_i\ge0, \ \sum_i\lambda_iy_i=0$
+    \sum\limits_i\lambda_i-\frac{1}{2}\sum\limits_{i,j}\lamda_i\lambda_jy_iy_j\mathbf{x_i^{\top}x_j}$ s.t. $\lambda_i\ge0, \ \sum_i\lambda_iy_i=0$
 \end{emphbox}
 
-\item Then the dual function needs to be calculated by taking the infimum of 8.25, which is accomplished by substituting the gradients w.r.t w and b (8.26) inside, resulting in the dual function (8.30a).
+\item Then the dual function needs to be calculated by taking the infimum of 8.25, which is accomplished by substituting the gradients w.r.t $w$ and $b$ (8.26) inside, resulting in the dual function (8.30a).
 \item Maximising this function w.r.t. its constraints is then the dual problem for SVM. (8.30)
-\end{itemize}
 
+\item Problem is strictly convex, therefore solution is unique
+\item If $\lambda_i \ne 0$, then $\boldsymbol{x}_i$ is support vector (Lies in or on margin)
+\item Only works, if classes can be linearly separated \\
+Else: Kernel/Soft Margin SVM required
+\item SVM works better when (nearly) separable than Linear Regression and is preferred when using kernels.
+\end{itemize}
 \end{sectionbox}
 
+\vspace{100}
 \section{Useful Facts}
-The matrix resulting from the dot product of between an $R^{n x p}$ matrix and $R^{p x n}$ has at most a rank of p.
+The matrix resulting from the dot product of between an $\mathbb{R}^{n \times p}$ matrix and $\mathbb{R}^{p \times n}$ has at most a rank of p.
 
 
 \newpage
@@ -457,7 +443,7 @@ Given a prediction table, eg:
                                         0 & $p_X(1,0)$ & 0 & 0 \\
                                         0 & 0 & $p_X(0,1)$ & 0 \\
                                         0 & 0 & 0 & $p_X(1,1)$}
-            \item Calculate Covariance: $Cov=XpX^T$
+            \item Calculate Covariance: $Cov=XpX^{\top}$
     \end{cookbox}
 \begin{sectionbox}
 \subsection{Classification Analysis}
