@@ -27,7 +27,7 @@
 
 \section{Basics}
 \begin{sectionbox}
-Observation Matrix: $\boldsymbol{X} \subset \R^{pxn}$ with $p$-dimensional random variable and $n$ obeservations ($i$: variable, $j$: observation)\\
+Observation Matrix: $\mathbf{X} \subset \R^{pxn}$ with $p$-dimensional random variable and $n$ obeservations ($i$: variable, $j$: observation)\\
 Expected Value $\mu=E[X]\in\R^p$ \\
 Variance $\Sigma=Var(X)=E[(X-\mu)(X-\mu)^{\top}]\in\R^{pxp}$\\
 $\Sigma$ is symmetric ($\Sigma^{\top} = \Sigma$) and positive semidefinite: $\forall x$: $x^{\top}\Sigma x \ge 0\ $ or $\Sigma \ge 0$\\
@@ -112,8 +112,8 @@ With increasing dimensions $p$:
 \section{Convex Functions}
 \begin{sectionbox}
 \begin{emphbox}
-    \textbf{Definition Convexity}: $\mathcal{C}\subset\R^n$ a convex set, i.e for any pair $\boldsymbol{x_1,x_2}\in\mathcal{C}$ the point $t\boldsymbol{x_2}+(1-t)\boldsymbol{x_1} \in \mathcal{C} \ \forall t\in[0,1]$. A function is called \emph{convex} if $\forall \boldsymbol{x_1,x_2}\in \mathcal{C}, t\in[0,1]$:\\
-    $tf(\boldsymbol{x_2})+(1-t)f(\boldsymbol{x_1}) \ge f(t\boldsymbol{x_2}+(1-t)\boldsymbol{x_1}) $
+    \textbf{Definition Convexity}: $\mathcal{C}\subset\R^n$ a convex set, i.e for any pair $\mathbf{x_1,x_2}\in\mathcal{C}$ the point $t\mathbf{x_2}+(1-t)\mathbf{x_1} \in \mathcal{C} \ \forall t\in[0,1]$. A function is called \emph{convex} if $\forall \mathbf{x_1,x_2}\in \mathcal{C}, t\in[0,1]$:\\
+    $tf(\mathbf{x_2})+(1-t)f(\mathbf{x_1}) \ge f(t\mathbf{x_2}+(1-t)\mathbf{x_1}) $
 \end{emphbox}
 \begin{itemize}
 \item By definition, a function is convex if a line can be drawn between any two points in a function, and all vertical values of the line are greater than or equal to all vertical values of the function between the same two points.
@@ -139,39 +139,39 @@ $f(z) = \left\{ \begin{array}{rcl}
 \item It is clear that we must find an appropriate f  to complete the decision function, and thus we define the global method with the \textbf{misclassification loss} as the problem we need to solve.
 $ \frac{1}{n}\sum\limits_{i=1}^nL_{0,1}(y_i,f(x_i))$
 \item The misclassification loss is extremely difficult to solve due to being non-continuous and non-convex, and so first we need to approximate this function as a convex function since they are easy to optimize.
-\item A convex approximation of misclassification loss is $log(1 + exp(-t))$, which when concatenated with  an affine function $f(\boldsymbol{x})=\boldsymbol{w^{\top}x}+b$ is also convex, and can therefore be easily optimized via minimization.\\
+\item A convex approximation of misclassification loss is $log(1 + exp(-t))$, which when concatenated with  an affine function $f(\mathbf{x})=\mathbf{w^{\top}x}+b$ is also convex, and can therefore be easily optimized via minimization.\\
 \begin{center}
 \begin{emphbox}
-    $\min\limits_{\boldsymbol{w}\in\R^n,b\in\R}\frac{1}{n}\sum\limits_{i=1}^nlog(1+exp(-y_i(\boldsymbol{w}^{\top}\boldsymbol{x}_i+b)))$
+    $\min\limits_{\mathbf{w}\in\R^n,b\in\R}\frac{1}{n}\sum\limits_{i=1}^nlog(1+exp(-y_i(\mathbf{w}^{\top}\mathbf{x}_i+b)))$
     \end{emphbox}
 \end{center}
 \item Noting that the loss is in \textbf{negative log-likelihood} form, we can convert this to a probability by taking the exponential of likelihood.
 \begin{emphbox}
     \begin{center}
-        $Pr(Y=y|x)=\frac{1}{1+exp(-y(\boldsymbol{w}^{\top}\boldsymbol{x}+b))}$
+        $Pr(Y=y|x)=\frac{1}{1+exp(-y(\mathbf{w}^{\top}\mathbf{x}+b))}$
     \end{center}
 \end{emphbox}
-Gradient-based methods can be used to find affine weights $\boldsymbol{w}$ and bias $b$ that solve the optimization problem (\emph{first box}).\\ Classify new sample: $sign(\boldsymbol{w}^{T}\boldsymbol{x}_{new}+b)$.
+Gradient-based methods can be used to find affine weights $\mathbf{w}$ and bias $b$ that solve the optimization problem (\emph{first box}).\\ Classify new sample: $sign(\mathbf{w}^{T}\mathbf{x}_{new}+b)$.
 \end{itemize}
 
 \subsection{Overfitting on Logistic Regression}
 \begin{itemize}
 \item When the samples are linearly separable (\emph{a dividing hyperplane exists}), there is a constraint that the target times the affine output is always greater than zero Under this constraint, no global minimum exists.
 \begin{emphbox}
-    If the data is linearly separable, we can find ($\boldsymbol{w}_s,b_s$) so that: $\forall i:\,y_i(\boldsymbol{w}_s^{\top}\boldsymbol{x}_i+b_s)<0$ \\
+    If the data is linearly separable, we can find ($\mathbf{w}_s,b_s$) so that: $\forall i:\,y_i(\mathbf{w}_s^{\top}\mathbf{x}_i+b_s)<0$ \\
     then the loss-function has no global minimum in $\R^{p+1}$
 \end{emphbox}
-This can be fixed by introducing a regulator which penalizes the magnitude of $(\boldsymbol{w}, b)$, e.g. by fixing a real constant $\lambda>0$ and adjusting the original cost function as  $\hat{F}(\boldsymbol{w}, b)=F(\boldsymbol{w}, b)+\lambda||\boldsymbol{w}||^2+b^2$.
+This can be fixed by introducing a regulator which penalizes the magnitude of $(\mathbf{w}, b)$, e.g. by fixing a real constant $\lambda>0$ and adjusting the original cost function as  $\hat{F}(\mathbf{w}, b)=F(\mathbf{w}, b)+\lambda||\mathbf{w}||^2+b^2$.
 \end{itemize}
 
 \subsection{Alternative Approach (Statistics)}
-Linear Model: $a = w_0+w_1x_1+...+w_nx_m = \boldsymbol{w}^{\top}\boldsymbol{x}$\\
+Linear Model: $a = w_0+w_1x_1+...+w_nx_m = \mathbf{w}^{\top}\mathbf{x}$\\
 \begin{tabular}{ll}
-    Probability: $\sigma(a)=\frac{1}{1+e^{-a}}$ & $D=\{(\boldsymbol{x}_i,z_i)\}$\\
-    Find $\boldsymbol{w}_{MLE}=arg \max\limits_{\boldsymbol{w}} P(D|\boldsymbol{w})$ &  $\boldsymbol{x}_i\in \R^d, z_i\in\{0,1\}$\\
+    Probability: $\sigma(a)=\frac{1}{1+e^{-a}}$ & $D=\{(\mathbf{x}_i,z_i)\}$\\
+    Find $\mathbf{w}_{MLE}=arg \max\limits_{\mathbf{w}} P(D|\mathbf{w})$ &  $\mathbf{x}_i\in \R^d, z_i\in\{0,1\}$\\
 \end{tabular}
-$P(D|\boldsymbol{w})=\prod\limits_{i=1}^n\sigma(\boldsymbol{w}^{\top}\boldsymbol{x}_i)^{z_i}(1-\sigma(\boldsymbol{w}^{\top}\boldsymbol{x}_i))^{1-z_i}$\\
-$L(\boldsymbol{w})=-log(P(D|\boldsymbol{w}))$, $\nabla_{\boldsymbol{w}}L(\boldsymbol{w})=\boldsymbol{X}(\sigma(\boldsymbol{X}^{\top}\boldsymbol{w})-\boldsymbol{z})$\\
+$P(D|\mathbf{w})=\prod\limits_{i=1}^n\sigma(\mathbf{w}^{\top}\mathbf{x}_i)^{z_i}(1-\sigma(\mathbf{w}^{\top}\mathbf{x}_i))^{1-z_i}$\\
+$L(\mathbf{w})=-log(P(D|\mathbf{w}))$, $\nabla_{\mathbf{w}}L(\mathbf{w})=\mathbf{X}(\sigma(\mathbf{X}^{\top}\mathbf{w})-\mathbf{z})$\\
 (Requires Hessian Matrix, which is positive semi-definite)\\
 Results are identical up to the factor 1/n
 \\
@@ -209,21 +209,21 @@ In its simplest form, the kernel trick means transforming data into another dime
 Assuming distribution of unlabeled raw data is concentrated around some lower-dimensional plane and a projection onto this plane captures most of the variance of the dataset. PCA uses an orthogonal transformation to convert a set of observations of possibly correlated variables into a set of values of linearly uncorrelated variables called principal components.\\
 \subsection{Geometric Interpretation}
 \begin{itemize}
-\item Imagining that $x$ is a vector in $p$ dimensions, and $U_k$ describes a lower dimensional subspace, then the coordinates of $x$ projected onto $U_k$ is found by first obtaining the scores of $x$ along $U_k$ and then taking the linear combination of these scores and the $U_k$ vectors: $\pi_\mathcal{U}(\boldsymbol{x})=\boldsymbol{U}_k\boldsymbol{U}_k^{\top}\boldsymbol{x}, \ \boldsymbol{U}_k\in\R^{p\times k}$
+\item Imagining that $x$ is a vector in $p$ dimensions, and $U_k$ describes a lower dimensional subspace, then the coordinates of $x$ projected onto $U_k$ is found by first obtaining the scores of $x$ along $U_k$ and then taking the linear combination of these scores and the $U_k$ vectors: $\pi_\mathcal{U}(\mathbf{x})=\mathbf{U}_k\mathbf{U}_k^{\top}\mathbf{x}, \ \mathbf{U}_k\in\R^{p\times k}$
 \item We want to find a $U_k$ that captures most of the variance in the dataset, which is equivalent to finding a hyperplane where the difference between the original data points and their projections are minimized, thus forming our problem for optimization.\\
 \begin{center}
-    $J(\boldsymbol{U}_k)=\sum\limits_{i=1}^n||\boldsymbol{x}_i-\boldsymbol{U}_k\boldsymbol{U}_k^{\top}\boldsymbol{x}_i||^2_2$
+    $J(\mathbf{U}_k)=\sum\limits_{i=1}^n||\mathbf{x}_i-\mathbf{U}_k\mathbf{U}_k^{\top}\mathbf{x}_i||^2_2$
 \end{center}
-\item The dataset can be represented as the dot product of an orthonormal matrix, a diagonal matrix and another orthonormal matrix via singular value decomposition: $\boldsymbol{X}=\boldsymbol{UDV}^{\top}$.
+\item The dataset can be represented as the dot product of an orthonormal matrix, a diagonal matrix and another orthonormal matrix via singular value decomposition: $\mathbf{X}=\mathbf{UDV}^{\top}$.
 \end{itemize}
 \begin{emphbox}
-    The first $k$ columns of the first orthonormal matrix via SVD $\boldsymbol{U}_k$ minimizes the difference between data points and their projections, and the corresponding covariance matrix of the scores is diagonal (= features are uncorrelated).
+    The first $k$ columns of the first orthonormal matrix via SVD $\mathbf{U}_k$ minimizes the difference between data points and their projections, and the corresponding covariance matrix of the scores is diagonal (= features are uncorrelated).
 \end{emphbox}
 \begin{itemize}
-\item The \emph{empirical covariance matrix} or \emph{Score Matrix} of the reduced $k$ variables $\boldsymbol{S}=\boldsymbol{U}_k^{\top}\boldsymbol{X}$ is diagonal, i.e. the features extracted by the PCA are uncorrelated.        [$cov(\boldsymbol{S})=\frac{1}{n}\boldsymbol{S}\boldsymbol{S}^{\top}=\frac{1}{n}\boldsymbol{U}^{\top}\boldsymbol{X}\boldsymbol{X}^{\top}\boldsymbol{U}$]\\
+\item The \emph{empirical covariance matrix} or \emph{Score Matrix} of the reduced $k$ variables $\mathbf{S}=\mathbf{U}_k^{\top}\mathbf{X}$ is diagonal, i.e. the features extracted by the PCA are uncorrelated.        [$cov(\mathbf{S})=\frac{1}{n}\mathbf{S}\mathbf{S}^{\top}=\frac{1}{n}\mathbf{U}^{\top}\mathbf{X}\mathbf{X}^{\top}\mathbf{U}$]\\
 $s_{ij}$: $j$-th score for the $i$-th principal component
-\item $U_k$ is the Loading Matrix give by $k$ left-singular vectors of the SVD of $\boldsymbol{\hat{X}}$.
-\item $\boldsymbol{S}$ can directly be obtained by the SVD with $\boldsymbol{S}=\boldsymbol{D}_k\boldsymbol{V}_k^{\top}$. As $\boldsymbol{D_k}$ is diagonal and $\boldsymbol{V}_k^{\top}$ only has $k$-rows, this only requires $nk$ operations instead of non-feasible $(2p-1)nk$ operations.
+\item $U_k$ is the Loading Matrix give by $k$ left-singular vectors of the SVD of $\mathbf{\hat{X}}$.
+\item $\mathbf{S}$ can directly be obtained by the SVD with $\mathbf{S}=\mathbf{D}_k\mathbf{V}_k^{\top}$. As $\mathbf{D_k}$ is diagonal and $\mathbf{V}_k^{\top}$ only has $k$-rows, this only requires $nk$ operations instead of non-feasible $(2p-1)nk$ operations.
 \item \emph{Dimensions}:\\ $X\in\R^{m\times n}$, $U\in\R^{m\times m}$, $D\in\R^{m\times n}$, $V^{\top}\in\R^{n\times n}$, $U_k\in\R^{k\times n}$, $X_k\in\R^{k\times n}$, $m$: Dimension variable, $n$: samples
 \item The eigenvectors of $\mathbf{X}\mathbf{X}^{\top}$ are the loadings of $\mathbf{X}$ only if $\mathbf{X}$ is centered.
 \end{itemize}
@@ -237,11 +237,11 @@ We can show that the scores are uncorrelated by showing that the dot product bet
 \end{itemize}
 
 \subsection{Statistical Interpretation}
-The idea behind the statistical interpretation is that covariance matrices are symmetric positive semidefinite, and therefore there exists some matrix $U$ which can diagonalize it (clearly illustrated using the eigenvalue decomposition). I.e. $Y=\boldsymbol{U}^{\top}X$ with $\boldsymbol{U}^{\top}\boldsymbol{U}=I_p$, such that the covariance matrix of $Y$ is diagonal and the variances decrease. In the same way:
+The idea behind the statistical interpretation is that covariance matrices are symmetric positive semidefinite, and therefore there exists some matrix $U$ which can diagonalize it (clearly illustrated using the eigenvalue decomposition). I.e. $Y=\mathbf{U}^{\top}X$ with $\mathbf{U}^{\top}\mathbf{U}=I_p$, such that the covariance matrix of $Y$ is diagonal and the variances decrease. In the same way:
 \begin{emphbox}
-        $\boldsymbol{D}=\boldsymbol{U}^{\top}var(X)\boldsymbol{U} $
-        $= \mathbb{E}[\boldsymbol{U}^{\top}(x-\mu_x)(X-\mu_x)^{\top}\boldsymbol{U}]$
-        $=\mathbb{E}[(\boldsymbol{U}^{\top}X-\boldsymbol{U}^{\top}\mu_x)(\boldsymbol{U}^{\top}X-\boldsymbol{U}^{\top}\mu_x)^{\top}]$
+        $\mathbf{D}=\mathbf{U}^{\top}var(X)\mathbf{U} $
+        $= \mathbb{E}[\mathbf{U}^{\top}(x-\mu_x)(X-\mu_x)^{\top}\mathbf{U}]$
+        $=\mathbb{E}[(\mathbf{U}^{\top}X-\mathbf{U}^{\top}\mu_x)(\mathbf{U}^{\top}X-\mathbf{U}^{\top}\mu_x)^{\top}]$
         $=\mathbb{E}[(Y-\mu_y)(Y-\mu_y)^{\top}=var(Y)$
 \end{emphbox}
 \end{sectionbox}
@@ -249,16 +249,16 @@ The idea behind the statistical interpretation is that covariance matrices are s
 \begin{sectionbox}
 \subsection{Error Model Interpretation}
 \begin{itemize}
-\item The error model interpretation is that the samples $\boldsymbol{X}$ is obtained via the addition between a signal matrix $\boldsymbol{L}$ (\emph{clean data}) and a noise matrix $\boldsymbol{N}$, where $\boldsymbol{L}$ is lying on a lower dimensional subspace than $\boldsymbol{X}$, and the goal is to try and find $\boldsymbol{L}$.
-[$\boldsymbol{X}=\boldsymbol{L}+\boldsymbol{N}$]
-\item Setting $\boldsymbol{L}$ equal to the SVD ($p$ dimensions with $k$; $rank(\boldsymbol{L})\le k$) minimizes the Frobenius norm of the difference between $\boldsymbol{X}$ and $\boldsymbol{L}$ given that the dimension $k$ of the subspace which $\boldsymbol{L}$ lies in is known beforehand. \\
-$ \hat{\boldsymbol{L}}=\arg\min_{rank(\boldsymbol{L})}||\boldsymbol{X}-\boldsymbol{L}||_F=\boldsymbol{U}_k\mathrm{diag}(d_1,..,d_k)\boldsymbol{V}_k^{\top}$
+\item The error model interpretation is that the samples $\mathbf{X}$ is obtained via the addition between a signal matrix $\mathbf{L}$ (\emph{clean data}) and a noise matrix $\mathbf{N}$, where $\mathbf{L}$ is lying on a lower dimensional subspace than $\mathbf{X}$, and the goal is to try and find $\mathbf{L}$.
+[$\mathbf{X}=\mathbf{L}+\mathbf{N}$]
+\item Setting $\mathbf{L}$ equal to the SVD ($p$ dimensions with $k$; $rank(\mathbf{L})\le k$) minimizes the Frobenius norm of the difference between $\mathbf{X}$ and $\mathbf{L}$ given that the dimension $k$ of the subspace which $\mathbf{L}$ lies in is known beforehand. \\
+$ \hat{\mathbf{L}}=\arg\min_{rank(\mathbf{L})}||\mathbf{X}-\mathbf{L}||_F=\mathbf{U}_k\mathrm{diag}(d_1,..,d_k)\mathbf{V}_k^{\top}$
 \end{itemize}
 
 \subsection{Relation to Autoencoders}
 \begin{itemize}
-    \item Autoencoders map an input to low dimensional space using a function $f$, which is then mapped back to a higher dimensional space using a function $g$ and can approximate the input $g\circ f(\boldsymbol{x_i})\approx\boldsymbol{x_i}$
-\item Letting $f$ and $g$ be linear mappings represented by matrices, the reconstruction error $J(\mathbf{W,V})=\sum_{i=1}^n||\boldsymbol{x}_i-\boldsymbol{WVx}_i||^2$ is minimised by setting $f$ as the transpose of $U_k$ and $g$ as $U_k$.
+    \item Autoencoders map an input to low dimensional space using a function $f$, which is then mapped back to a higher dimensional space using a function $g$ and can approximate the input $g\circ f(\mathbf{x_i})\approx\mathbf{x_i}$
+\item Letting $f$ and $g$ be linear mappings represented by matrices, the reconstruction error $J(\mathbf{W,V})=\sum_{i=1}^n||\mathbf{x}_i-\mathbf{wVx}_i||^2$ is minimised by setting $f$ as the transpose of $U_k$ and $g$ as $U_k$.
 \begin{emphbox}
     Let $\mathbf{U}_k$ be the first $k$ left singular vectors of observation matrix $\mathbf{X}$, the $\mathbf{V}=\mathbf{U}_k^{\top}$ and $\mathbf{W}=\mathbf{U}_k$ minimize the reconstruction error of the linear autoencoder.
 \end{emphbox}
@@ -345,7 +345,7 @@ With $p$/$N$ being Input/Output dimensions and $l$ layers. $N$ depends on loss f
     Solve: $\hat{\Theta}=arg\min_{\Theta\in\R^N}=\frac{1}{n}\sum_iL(f_\Theta(\mathbf{x}_i))$ (5.1)\\
     $\varphi_\mathbf{W}:\R^p\to \R^m, \mathbf{h}\to \mathbf{Wh}$ (5.2)\\
     $\sigma(t)=max\{0,t\}$ (ReLU, 5.3)\\
-    $f:\R^p \rightarrow \R^o: \sigma_l\circ\varphi_{\boldsymbol{W}_l}\circ\cdots\circ\sigma_1\circ\varphi_{\boldsymbol{W}_1}(\boldsymbol{x})$ (5.5)
+    $f:\R^p \rightarrow \R^o: \sigma_l\circ\varphi_{\mathbf{w}_l}\circ\cdots\circ\sigma_1\circ\varphi_{\mathbf{w}_1}(\mathbf{x})$ (5.5)
 \end{emphbox}
 \subsection{Training FNN}
 The gradients can be calculated via chain rule through each subsequent layer, or in this case due to vectors via the Jacobian. From (5.5) the key stages include matrix multiplication (5.2) and nonlinear activation (5.3). The corresponding Jacobians w.r.t. inputs in each stage is seen in (5.6) and (5.7) respectively. However, for the Jacobian of matrix multiplication w.r.t weights, the weights need to be reshaped into a vector (5.9) which will then allow us to formulate the Jacobian (5.10). Then the gradients w.r.t loss (5.11) is simply (5.31a). The gradient can then be used to update the weights for the next time step, making sure to apply an inverse reshaping of the gradient vector into a matrix (5.14).
@@ -361,10 +361,44 @@ We get for the output-layer (L): $\frac{\partial}{\partial\mathbf{W}_l}F=\mathbf
 
 $\frac{\partial}{\partial\mathbf{W}_j}F=\mathbf{J}_L(\mathbf{h}_l)\cdot\mathbf{J}_{\sigma_l}(\mathbf{W_lh_{l-1}})\cdot\mathbf{W_l}\mathbf{J}_{\sigma_{l-1}}(\mathbf{W_{l-1}h_{l-2}})\cdot\mathbf{J}_{l-1}\cdots \mathbf{J}_{mult}(\mathbf{h}_{l-1})$ for the j-th layer
 \end{emphbox}
-\end{sectionbox}
-\textbf{Notes:}
 
-\vspace{200}
+\subsection{Multiclass Classification with FNNs}
+Considers the problem of assigning an input $\mathcal{X}\in\mathbb{R}^p$ to one out of multiple, say $C$ classes.
+\begin{itemize}
+    \item Model problem via random variable $(\mathcal{X,Y})$, with $\mathcal{X}\in\mathbb{R}^p$ and $\mathcal{Y}\in\{\mathbf{e}_1,...,\mathbf{e}_C\}$ as one of the standard basis vectors in $\mathbb{R}^C$.
+    \item Realization $\mathbf{y}=\mathbf{e}_c$ means that the event \emph{belongs to class} $c$ is true.\\
+    $\rightarrow$ This modelling of the output variable is also know as \emph{one-hot-encoding}.
+    \item Idea: $\mathcal{X}$ is in put to FNN and output vector $\mathbb{R}^C$ reflects probability of class distribution given $\mathcal{X}$.
+    \[
+    \mathbf{h}_l\approx
+    \begin{bmatrix}
+    Pr(\mathcal{Y}=\mathbf{e}_1|\mathcal{X}=\mathbf{x})\\
+    \vdots\\
+    Pr(\mathcal{Y}=\mathbf{e}_C|\mathcal{X}=\mathbf{x})
+    \end{bmatrix}
+    \]
+    \item Thus last activation function $\sigma_l$ outputs probability distribution for the $C$ classes. All entries add up to 1.
+    \item Example for output function is the \textbf{softmax}, given $\forall c\in1,...,C$ by
+    \[
+    \sigma:\mathbb{R}^C \to \mathbb{R}^C,
+    \begin{bmatrix}
+    a_1\\ \vdots\\ a_C
+    \end{bmatrix}
+    \to
+    \begin{bmatrix}
+    S_1\\ \vdots\\ S_C
+    \end{bmatrix},\; S_c=\frac{\exp a_c}{\sum_c\exp a_c}
+    \]
+    \item Derivative/Jacobi matrix $J$ of softmax for arbitrary $i$ and $j$:
+    \[
+    J_{i,j} = \begin{cases}
+        S_i(1-S_j) & ,i=j\\
+        -S_j S_i & ,i\ne j
+        \end{cases}
+    \]
+\end{itemize}
+\end{sectionbox}
+
 \section{Support Vector Machines}
 \begin{sectionbox}
 \subsection{Geometry}
@@ -374,10 +408,10 @@ Idea: Find hyperplane to divide $x, y$ into two subspaces
 \item The vector $w$ is normal to the hyperplane (8.1) since a vector of any direction in the hyperplane projected onto $w$ has a magnitude of zero. (8.2)
 \item The signed distance from any point to a hyperplane is defined as in (8.3), and can be interpreted as the distance from the hyperplane to the point $x$. It is formulated by first projecting $x$ onto $w$ and then centering the number line at $b$ to obtain the signed value of $x$ in the decision perspective (denote this as the decision distance). Then this value is divided by the magnitude of w to obtain the signed distance. Note that $-b$ denotes the decision distance to the origin, and the magnitude of $w$ is a scaling factor used to shift between the decision distance and signed distance.
 \begin{emphbox}
-    Hyperplane:$\mathcal{H}_{\boldsymbol{w},b}=\{x\in \mathbb{R} | \boldsymbol{w}^{\top}\mathbf{x}-b=0\}$ (8.1)\\
+    Hyperplane:$\mathcal{H}_{\mathbf{w},b}=\{x\in \mathbb{R} | \mathbf{w}^{\top}\mathbf{x}-b=0\}$ (8.1)\\
     $w$ is normal to $\mathcal{H}$: $\mathbf{w}^{\top}(\mathbf{x}_1-\mathbf{x}_2)=0$ (8.2)\\
-    Signed Distance: $\delta(\boldsymbol{x}, \mathcal{H}_{\boldsymbol{w},b})=\frac{\boldsymbol{w^{\top}x}-b}{||\boldsymbol{w}||}$ (8.3)\\
-    Margin:$\mathcal{H}_{+}=\{x\in \mathbb{R} | \boldsymbol{w}^{\top}\mathbf{x}-b=1\}$ $\mathcal{H}_{-}=\{x\in \mathbb{R} | \boldsymbol{w}^{\top}\mathbf{x}-b=-1\}$ (8.8-9)
+    Signed Distance: $\delta(\mathbf{x}, \mathcal{H}_{\mathbf{w},b})=\frac{\mathbf{w^{\top}x}-b}{||\mathbf{w}||}$ (8.3)\\
+    Margin:$\mathcal{H}_{+}=\{x\in \mathbb{R} | \mathbf{w}^{\top}\mathbf{x}-b=1\}$ $\mathcal{H}_{-}=\{x\in \mathbb{R} | \mathbf{w}^{\top}\mathbf{x}-b=-1\}$ (8.8-9)
 \end{emphbox}
 \item The decision perspective can be imagined as the perspective where classification decisions are made, all depending on the decision distance.
 \item The positive margin is defined as the hyperplane with a decision distance of 1 (8.8), and the negative margin is defined as the hyperplane with a decision distance of -1 (8.9).
@@ -392,8 +426,8 @@ Idea: Find hyperplane to divide $x, y$ into two subspaces
     Conditions: $\mathbf{w^{\top}x}_i-b\ge +1 \ \mbox{for } y_i=
     1$ and $\mathbf{w^{\top}x}_i-b\ge -1 \ \mbox{for } y_i=
     -1$\\
-    Compact: $y_i\cdot(\mathbf{w^{\top}x}_i-b)\ge1 \ \forall i$ (8.12)
-    Minimization: $\min\limits_\mathbf{w}\frac{1}{2}||\mathbf{w}||^2_2 \ \mbox{s.t.} \ y_i(\mathbf{w^{\top}x}_i-b)\ge1 \ \forall i$
+    Compact: $y_i\cdot(\mathbf{w^{\top}x}_i-b)\ge1 \ \text{for all } i=1,...,N$ (8.12)\\
+    Minimization (8.14): $\min\limits_\mathbf{w}\frac{1}{2}||\mathbf{w}||^2_2 \ \mbox{s.t.} \ y_i(\mathbf{w^{\top}x}_i-b)\ge1 \ \text{for all } i=1,...,N$
 \end{emphbox}
 \end{itemize}
 \end{sectionbox}
@@ -407,9 +441,9 @@ Idea: Find hyperplane to divide $x, y$ into two subspaces
     $\min\limits_{\mathbf{z}\in\R^n}f(\mathbf{z}) \ \mbox{s.t. } c_i(\mathbf{z}) = 0 \ \forall i\in\mathcal{E} \ \mbox{and s.t. } c_j(\mathbf{z}) \ge 0 \ \forall j\in\mathcal{I}$\\
     Lagrange Function (8.16): $L(\mathbf{z,\lambda})=f(\mathbf{z})-\sum\limits_{i\in\mathcal{I}\bigcup\mathcal{E}}\lambda_ic_i(\mathbf{z})$
     \textbf{Karush-Kuhn-Tucker Conditions}\\
-    For $\mathbf{z^*}$ as a solution to 8.15, there exists a larange multiplier $\mathbf{\lambda^*}$ such that:\\
+    For $\mathbf{z^*}$ as a solution to 8.15, there exists a Lagrange multiplier $\mathbf{\lambda^*}$ such that (8.17-8.21):\\
     \begin{itemize}
-        \item $\Delta_zL(z^*,\lambda^*)=0$
+        \item $\nabla_zL(z^*,\lambda^*)=0$
         \item $c_i(z^*)=0 \quad \forall i\in\mathcal{E}$
         \item $c_i(z^*)\ge0 \quad \forall i \in\mathcal{I}$
         \item $\lambda_i^* \ge0 \quad \forall i\in\mathcal{I}$
@@ -423,20 +457,20 @@ Idea: Find hyperplane to divide $x, y$ into two subspaces
 \begin{itemize}
 \item SVM via Lagrangian duality follows the process specified above. The original problem is as in (8.14), the Lagrangian primal is as in (8.23 to 8.25) and the KKT conditions are as in (8.26 to 8.29). 
 \begin{emphbox}
-    Problem: $\min\limits_{\boldsymbol{w}, b, \boldsymbol{\lambda}\ge0} L(\boldsymbol{w}, b, \boldsymbol{\lambda})$ \\  $L(\boldsymbol{w}, b, \boldsymbol{\lambda})= \frac{1}{2}||\boldsymbol{w}||^2 - \sum\limits_i \lambda_i y_i(\boldsymbol{w^{\top}x_i}-b)+\lambda_i $\\
-    		$\nabla_{(\boldsymbol{w},b)}L(\boldsymbol{w}, b, \boldsymbol{\lambda})=\mat{\boldsymbol{w}-\sum_i\lambda_iy_i\boldsymbol{x}_i \\ \sum_i \lambda_iy_i}$\\
-    KKT Conditions:\\ $\mathbf{w^*}-\sum_i\lambda_i^*y_ix_i=0$, \quad $\sum_i\lambda^*_iy_i=0$\\
-    $\lambda_i^*(y_i(w^{*T}x_i-b^*)-1=0$\\
-    Returns: \\
-    $\min\limits_{\boldsymbol{w}, b, \boldsymbol{\lambda}\ge0} L(\boldsymbol{w}, b, \boldsymbol{\lambda})=L_D(\mathbf{\lambda})=
+    Problem: $\min\limits_{\mathbf{w}, b, \mathbf{\lambda}\ge0} L(\mathbf{w}, b, \mathbf{\lambda})$ \\  $L(\mathbf{w}, b, \mathbf{\lambda})= \frac{1}{2}||\mathbf{w}||^2 - \sum\limits_i \lambda_i y_i(\mathbf{w^{\top}x_i}-b)+\lambda_i $ (8.25)\\
+    		$\nabla_{(\mathbf{w},b)}L(\mathbf{w}, b, \mathbf{\lambda})=\mat{\mathbf{w}-\sum_i\lambda_iy_i\mathbf{x}_i \\ \sum_i \lambda_iy_i}$\\
+    KKT Conditions:\\ $\mathbf{w^*}-\sum_i\lambda_i^*y_ix_i=0$ (8.27), \quad $\sum_i\lambda^*_iy_i=0$ (8.28)\\
+    $\lambda_i^*(y_i(w^{*T}x_i-b^*)-1=0$ (8.29)\\
+    Returns (8.30): \\
+    $\min\limits_{\mathbf{w}, b, \mathbf{\lambda}\ge0} L(\mathbf{w}, b, \mathbf{\lambda})=L_D(\mathbf{\lambda})=
     \sum\limits_i\lambda_i-\frac{1}{2}\sum\limits_{i,j}\lamda_i\lambda_jy_iy_j\mathbf{x_i^{\top}x_j}$ s.t. $\lambda_i\ge0, \ \sum_i\lambda_iy_i=0$
 \end{emphbox}
 
-\item Then the dual function needs to be calculated by taking the infimum of 8.25, which is accomplished by substituting the gradients w.r.t $w$ and $b$ (8.26) inside, resulting in the dual function (8.30a).
-\item Maximising this function w.r.t. its constraints is then the dual problem for SVM. (8.30)
+\item Then the dual function needs to be calculated by taking the infimum (\emph{greatest element}) of (8.25), which is accomplished by substituting (8.27) and then (8.28) into (8.25), resulting in the dual form (8.30).
+\item Maximising this function w.r.t. its constraints is then the dual problem for the SVM. (8.30)
 
 \item Problem is strictly convex, therefore solution is unique
-\item If $\lambda_i \ne 0$, then $\boldsymbol{x}_i$ is support vector (Lies in or on margin)
+\item If $\lambda_i \ne 0$, then $\mathbf{x}_i$ is support vector (Lies in or on margin)
 \item Only works, if classes can be linearly separated \\
 Else: Kernel/Soft Margin SVM required
 \item SVM works better when (nearly) separable than Linear Regression and is preferred when using kernels.
@@ -450,7 +484,7 @@ Allows for some wrongly assigned data samples and searches for a trade-off betwe
     \item Optimization problem changes to\\
     $\min_{\mathbf{w},b,\xi}\frac{1}{2}||\mathbf{w}||_2^2+c\sum_{i=1}^N\xi_i$\\
     s.t. $y_i(\mathbf{w}^{\top}x_i-b)\ge 1-\xi_i)$ and $\xi_i\ge0\;\;\forall i$\\
-    \hspace{5}[ $c>0$\emph{ and weighs between large margin and misclassification }\\$\rightarrow$\emph{ larger }$c$\emph{, the more the violation of the separation rule is punished.}]
+    \hspace{5}[ $c>0$\emph{ and weighs between large margin and misclassification }\\$\rightarrow$\emph{ larger }$c$\emph{, the violation of the separation rule is punished more.}]
 \end{itemize}
 \end{sectionbox}
 
@@ -474,12 +508,17 @@ Allows for some wrongly assigned data samples and searches for a trade-off betwe
     \item A function $f$ is called a \textbf{Distance Measure} if $\forall x,y \in \mathbb{R}^p$:\\
     \emph{Symmetry}: $d(x,y)=d(y,x)$\\
     \emph{Positive Definiteness}: $d(x,y)=0 \Leftrightarrow x=y; d(x,y)\ge0$\\
-    \emph{Triangular Irregularity}: $d(x,z)\ge d(x,y)+d(x,z)$
+    \emph{Triangular Irregularity}: $d(x,z)\le d(x,y)+d(y,z)$
     \item \textbf{Taxicab/Manhattan Norm}: $||\mathbf{x}||_1=\sum_{i=1}^n{x_1}$\\
     \textbf{Euclidean Norm}: $||\mathbf{x}||_2=\sqrt{x_1^2+...+x_n^2}$\\
     \textbf{Maximum Norm}: $||\mathbf{x}||_{\infty}=max(|x_1|,...,|x_n|)$\\
     \textbf{Inner Product Norm}: $||\mathbf{x}||_A=\sqrt{\mathbf{x}A\mathbf{x}^{\top}}$  [Frobenius: $A=\mathbbm{1}$]\\
     \emph{Reminder}: $||q\cdot\mathbf{x}||=|q|\cdot||\mathbf{x}||$ and $||\mathbf{x}+\mathbf{y}||\le||\mathbf{x}||+||\mathbf{y}||$
+    \item \textbf{Lagrange Method}:\\
+    1. $L(x,y,\lambda)=f(x,y)+\lambda\cdot g(x,y)$ \\($g(x,y)$ \emph{is the conditional equation set to zero})\\
+    2. $\bigtriangledown L\overset{!}{=}0$ (\emph{calculate} $L_x$(\textrm{I}), $L_y$(\textrm{II}) and $L_{\lambda}\overset{!}{=}0$ (\textrm{III}))\\
+    3. Eliminate $\lambda$ from $L_x$ \& $L_y$, (\textrm{IV}): $\frac{df(x,y)}{dx}\cdot y-\frac{df(x,y)}{dy}\cdot x\overset{!}{=}0$\\
+    4. Solve system of equations (\textrm{III}) and (\textrm{IV}) to find all $x$ and $y$.
 \end{itemize}
 
 
@@ -506,11 +545,18 @@ Given a prediction table, eg:
 \subsection{Classification Analysis}
 \emph{False Positive}: Indicates presence of a condition, but actually not present.
 \emph{False Negative}: Indicates \textbf{no} presence of a condition, actually \textbf{is} present.
+\begin{center}
+	\includegraphics[width = 1.0\columnwidth]{figures/precession_recall.png}
+\end{center}
 \begin{itemize}
     \item \textbf{Accuracy}: $\frac{\text{# correct predictions}}{\text{# total data points}}$
-    \item \textbf{Precision}: $\frac{\text{# correctly returned relevant answers}}{\text{total items returned by ranker}}$
-    \item \textbf{Recall}: $\frac{\text{# correctly returned relevant answers}}{\text{total relevant items}}$
-    \item \textbf{F1-Score}: $F_1= 2*\frac{precision*recall}{precision+recall}$
+    \item \textbf{Precision}: $\frac{\text{# happy correct answers}}{\text{total items returned by ranker}}$
+    \item \textbf{Recall}: $\frac{\text{# happy correct answers}}{\text{total relevant items}}$
+    \item \textbf{F1-Score}: $F_1= 2*\frac{\text{precision*recall}}{\text{precision+recall}}$
+    \item \textbf{NDCG} (Normalized Discounted Cumulitive Gain):\\
+    Similar to a search engine, top few answers in a query matter more.
+    \emph{Related metrics}: Cumulative gain sums up the relevance of the top $k$ items. Discounted cumulative gain (DCG) discounts items that are further down the list. Normalized discounted cumulative gain is a normalized version of DCG which divides the DCG by the perfect ideal  DCG score with ideal ordering, so that the normalized score always lies between 0.0 and 1.0. For a position $p$:
+    $DCG_p=\sum_{i=1}^p\frac{2^{rel_i-1}}{log_2(i+1)}$ \hspace{5}[for IDCG $p=|REL|$]
 \end{itemize}
 \subsubsection{ROC Curve}
 The ROC curve is a graphical plot that illustrates the diagnostic ability of a binary classifier system as its discrimination threshold is varied. It shows:
@@ -519,13 +565,14 @@ The ROC curve is a graphical plot that illustrates the diagnostic ability of a b
     \item Test accuracy; the closer the graph is to the top and left-hand borders, the more accurate the test. Likewise, the closer the graph to the diagonal, the less accurate the test. A perfect test would go straight from zero up the the top-left corner and then straight across the horizontal.
     \item The likelihood ratio; given by the derivative at any particular cutpoint.
 \end{itemize}
+\end{sectionbox}
+
+\begin{sectionbox}
 \begin{center}
 	    \includegraphics[width = 0.9\columnwidth]{figures/sphx_glr_plot_roc_001.png}
 	\end{center}
 The \textbf{Area under the Curve (AUC)} is the integral of the ROC Curve and gives a measure how good the classifier is. An area under the ROC curve of 0.8, for example, means that a randomly selected case from the group with the target equals 1 has a score larger than that for a randomly chosen case from the group with the target equals 0 in 80\% of the time. When a classifier cannot distinguish between the two groups, the area will be equal to 0.5 (the ROC curve will coincide with the diagonal). When there is a perfect separation of the two groups, i.e., no overlapping of the distributions, the area under the ROC curve reaches to 1 (the ROC curve will reach the upper left corner of the plot). 
-\end{sectionbox}
 
-\begin{sectionbox}
 \subsection{Curse of Dimensionality}
 \begin{itemize}
     \item The angular distance between $2$ randomly sampled vectors increases with dimension $d$ of the sample space.
@@ -539,9 +586,7 @@ The \textbf{Area under the Curve (AUC)} is the integral of the ROC Curve and giv
 \begin{center}
 	    \includegraphics[width = 0.9\columnwidth]{figures/angular_distance_plot.png}
 	\end{center}
-\end{sectionbox}
 
-\begin{sectionbox}
  \subsection{Logistic Regression}
  \begin{itemize}
      \item  With big datasets, standard gradient descent could lead to       \texttt{Memory Error}
