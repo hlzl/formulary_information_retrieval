@@ -28,7 +28,7 @@
 \section{Basics}
 \begin{sectionbox}
 Observation Matrix: $\mathbf{X} \subset \R^{pxn}$ with $p$-dimensional random variable and $n$ obeservations ($i$: variable, $j$: observation)\\
-Expected Value $\mu=E[X]\in\R^p$ \\
+Expected Value $\mu_X=\sum_{i\in X} x_i\cdot P_X(x_i)=E[X]\in\R^p$ \\
 Variance $\Sigma=Var(X)=E[(X-\mu)(X-\mu)^{\top}]\in\R^{pxp}$\\
 $\Sigma$ is symmetric ($\Sigma^{\top} = \Sigma$) and positive semidefinite: $\forall x$: $x^{\top}\Sigma x \ge 0\ $ or $\Sigma \ge 0$\\
 Estimated Value based on mean of observations $n$: \\ $\hat{\mu}_p=\frac{1}{n}\sum_{j=1}^nx_{pj}$ (calculate for every dimension $p$)\\
@@ -69,7 +69,7 @@ Map an input vector to an output value and find a decision function that minimiz
 \begin{sectionbox}
 
 \subsection{Generalization Error}
-Difference between Empirical Loss and Expected Loss for a function $f$.
+Difference between Empirical Loss and Expected Loss for a function $f$.\\In practice, the difference between the training and the validation error.
 \begin{itemize}
     \item $G_N(f)=\mathbb{E}[L(Y,f(X))]-\frac{1}{N}\sideset{}{_{i=1}^N}\sum L(y_i,f(x_i))$
     \item $G_N \to 0$ for $N\to \infty$
@@ -248,6 +248,7 @@ The idea behind the statistical interpretation is that covariance matrices are s
 
 \begin{sectionbox}
 \subsection{Error Model Interpretation}
+The projection is chosen in a way that the error measured with the Squared Euclidean Norm is minimized. The minimized noise is \emph{White Gaussian}.
 \begin{itemize}
 \item The error model interpretation is that the samples $\mathbf{X}$ is obtained via the addition between a signal matrix $\mathbf{L}$ (\emph{clean data}) and a noise matrix $\mathbf{N}$, where $\mathbf{L}$ is lying on a lower dimensional subspace than $\mathbf{X}$, and the goal is to try and find $\mathbf{L}$.
 [$\mathbf{X}=\mathbf{L}+\mathbf{N}$]
@@ -283,7 +284,7 @@ $ \hat{\mathbf{L}}=\arg\min_{rank(\mathbf{L})}||\mathbf{X}-\mathbf{L}||_F=\mathb
 \item If we want to calculate scores for new observations considering centering, we take the formula for raw new observations (7.4), replace the input matrix with a centred input matrix and the observation with an approximated centred observation, resulting in a nice formula involving the Gram-Matrix. (7.9)
 \begin{emphbox}
     EVD of Gram Matrix (7.2): $\mathbf{K=V\Sigma^{\top}\Sigma V^{\top}}$\\
-    Centered Gram Matrix (7.8): $\mathbf{\tilde{K}=HKH}$ with $\mathbf{H}=(\mathbf{I}_n.\frac{1}{n}\mathds{1}_n\mathds{1}_n^{\top})$\\
+    Centered Gram Matrix (7.8): $\mathbf{\tilde{K}=HKH}$ with $\mathbf{H}=(\mathbf{I}_n-\frac{1}{n}\mathds{1}_n\mathds{1}_n^{\top})$\\
     Computing scores for new sample $\mathbf{y}$:
     $\mathbf{U_k^{\top}}(\mathbf{\tilde{y}})=\mathbf{\Sigma_k^{-1}V_k^{\top}\tilde{k}_y}$, \quad $\mathbf{\tilde{k}_y=Hk_y-}\frac{1}{n}\mathbf{HK}\mathds{1}_n$
 \end{emphbox}
@@ -321,7 +322,7 @@ Instead of replacing the inner product $\mathbf{x^{\top}y}$ by $\langle\phi(\mat
     \end{bmatrix}
     \]
 	\item Compute centered Gram Matrix: $\mathbf{\tilde{K}=HKH}$ with\\ $\mathbf{H=I}_n-\frac{1}{n}\mathds{1}_n\mathds{1}_n^{\top}$
-	\item Compute Eigenvalue Decomposition: $\mathbf{\tilde{K}=V\Lambda V^{\top}}$. Because $\mathbf{K}$ is positive semi-definite and therefore the diagonal entries of $\mathbf{\Lambda}$ are non-negative, we write $\mathbf{\Lambda=\Sigma}^2=diag(\sigma_1^2, \cdot, \sigma_n^2)$
+	\item Compute Eigenvalue Decomposition: $\mathbf{\tilde{K}=V\Lambda V^{\top}}$. Because $\mathbf{K}$ is positive semi-definite and therefore the diagonal entries of $\mathbf{\Lambda}$ are non-negative, we write $\mathbf{\Lambda=\Sigma}^2=diag(\sigma_1^2, \cdots, \sigma_n^2)$
 	\item Reduced Matrices: $\mathbf{\Sigma_k}=diag(\sigma_1,\cdots,\sigma_k),\ \in\R^{k\times k}$ and $\mathbf{V}_k\in\R^{n\times k}$
 	\item Reduced Training Data: $\mathbf{S=\Sigma_kV}_k^{\top}$
 	\item For new datapoint $\mathbf{y}\in\R^p$, compute new components: 
@@ -350,12 +351,10 @@ With $p$/$N$ being Input/Output dimensions and $l$ layers. $N$ depends on loss f
 \subsection{Training FNN}
 The gradients can be calculated via chain rule through each subsequent layer, or in this case due to vectors via the Jacobian. From (5.5) the key stages include matrix multiplication (5.2) and nonlinear activation (5.3). The corresponding Jacobians w.r.t. inputs in each stage is seen in (5.6) and (5.7) respectively. However, for the Jacobian of matrix multiplication w.r.t weights, the weights need to be reshaped into a vector (5.9) which will then allow us to formulate the Jacobian (5.10). Then the gradients w.r.t loss (5.11) is simply (5.31a). The gradient can then be used to update the weights for the next time step, making sure to apply an inverse reshaping of the gradient vector into a matrix (5.14).
 \begin{emphbox}
-    $\mathbf{J}_{\mathbf{W} g}(\mathbf{x})=\mathbf{W\cdot J_g}(\mathbf{x})$ (5.6)\\
-    $\mathbf{j}_{(ij),\sigma}(\mathbf{x}) = \left\{ \begin{array}{rcl}
-     \sigma'(x_i) & \mbox{if}
-& i=j \\ 0 & & \mbox{else}\\
-\end{array}\right.$ (5.7)\\
-$\mathbf{J}_{mult}(x)=diag(\mathbf{x}^{\top})\in\R^{m\times mn}$ (5.10), doesn't depent on\\
+    $\mathbf{J}_{\mathbf{W} g}(\mathbf{x})=\mathbf{W\cdot J_g}(\mathbf{x})$ (5.6)
+    $\mathbf{J}_{\sigma}(\mathbf{x})=diag(\sigma'(x_1),...,\sigma'(x_m))$
+    (5.7)
+$\mathbf{J}_{mult}(x)=diag(\mathbf{x}^{\top},...,\mathbf{x}^{\top})\in\R^{m\times mn}$ (5.10), doesn't depent on $\mathbf{W}$\\
 With $\mathbf{h}_j=\sigma_j\circ\varphi_\mathbf{W_j}\circ\cdots\circ\sigma_1\circ\varphi_{\mathbf{W_1}}(\mathbf{x})$ the j-th output\\
 We get for the output-layer (L): $\frac{\partial}{\partial\mathbf{W}_l}F=\mathbf{J}_L(\mathbf{h}_l)\cdot\mathbf{J}_{\sigma_l}(\mathbf{W_lh_{l-1}})\cdot\mathbf{J}_{mult}(\mathbf{h}_{l-1})$\\
 
@@ -368,7 +367,7 @@ Considers the problem of assigning an input $\mathcal{X}\in\mathbb{R}^p$ to one 
     \item Model problem via random variable $(\mathcal{X,Y})$, with $\mathcal{X}\in\mathbb{R}^p$ and $\mathcal{Y}\in\{\mathbf{e}_1,...,\mathbf{e}_C\}$ as one of the standard basis vectors in $\mathbb{R}^C$.
     \item Realization $\mathbf{y}=\mathbf{e}_c$ means that the event \emph{belongs to class} $c$ is true.\\
     $\rightarrow$ This modelling of the output variable is also know as \emph{one-hot-encoding}.
-    \item Idea: $\mathcal{X}$ is in put to FNN and output vector $\mathbb{R}^C$ reflects probability of class distribution given $\mathcal{X}$.
+    \item Idea: $\mathcal{X}$ is the input to the FNN and output vector $\mathbf{h}_l$ in $\mathbb{R}^C$ approximates the probability of the class distribution given $\mathcal{X}$.
     \[
     \mathbf{h}_l\approx
     \begin{bmatrix}
@@ -488,7 +487,18 @@ Allows for some wrongly assigned data samples and searches for a trade-off betwe
 \end{itemize}
 \end{sectionbox}
 
-\vspace{100}
+\begin{sectionbox}
+\subsection{Kernel SVM}
+\begin{itemize}
+    \item Dual Form: \\$\max_{\lambda}\sum_i \lambda_i - \frac{1}{2}\lambda^{\top}\mathbf{H}\lambda$ s.t. $0\le\lambda_i\le c, \sum_i \lambda_i y_i=0$\\
+with $h_{ij}=y_i y_j \mathbf{x}_i^{\top} \mathbf{x}_j$ which changes to $h_{ij}=y_i y_j \kappa(\mathbf{x}_i, \mathbf{x}_j)$ using a Kernel function.
+\item Using the KKT conditions, we can compute\\$b=\frac{1}{N_{Supp}}\sum_{i\in Supp}(\sum_{j\in Supp}(\lambda_j y_j \kappa(\mathbf{x}_i,\mathbf{x}_j))-y_i)$
+\item $Supp$ denotes all $i$ for which $0<\lambda_i\le c$.
+\end{itemize}
+
+\end{sectionbox}
+
+
 \section{Useful Facts}
 \begin{itemize}
     \item The matrix resulting from the dot product of between an $\mathbb{R}^{n \times p}$ matrix and $\mathbb{R}^{p \times n}$ has at most a rank of p.
@@ -519,6 +529,9 @@ Allows for some wrongly assigned data samples and searches for a trade-off betwe
     2. $\bigtriangledown L\overset{!}{=}0$ (\emph{calculate} $L_x$(\textrm{I}), $L_y$(\textrm{II}) and $L_{\lambda}\overset{!}{=}0$ (\textrm{III}))\\
     3. Eliminate $\lambda$ from $L_x$ \& $L_y$, (\textrm{IV}): $\frac{df(x,y)}{dx}\cdot y-\frac{df(x,y)}{dy}\cdot x\overset{!}{=}0$\\
     4. Solve system of equations (\textrm{III}) and (\textrm{IV}) to find all $x$ and $y$.
+    \item Training and test sets normally get divided into:\\
+    \emph{Machine Learning}: 60/20/20\\
+    \emph{Deep Learning}: 98/1/1
 \end{itemize}
 
 
@@ -549,9 +562,10 @@ Given a prediction table, eg:
 	\includegraphics[width = 1.0\columnwidth]{figures/precession_recall.png}
 \end{center}
 \begin{itemize}
-    \item \textbf{Accuracy}: $\frac{\text{# correct predictions}}{\text{# total data points}}$
-    \item \textbf{Precision}: $\frac{\text{# happy correct answers}}{\text{total items returned by ranker}}$
-    \item \textbf{Recall}: $\frac{\text{# happy correct answers}}{\text{total relevant items}}$
+    \item \textbf{Accuracy}: $\frac{\text{# correct predictions}}{\text{# total data points}}$\\
+    Drawbacks: Cost of misclassification might differ for different tasks \& we have a lot of data for one class but not the other (\emph{Skewed Data}).
+    \item \textbf{Precision}: $\frac{\text{# happy correct answers}}{\text{total items returned by ranker}} = \frac{\text{True Positives}}{\text{True Positives + False Positives}}$
+    \item \textbf{Recall}: $\frac{\text{# happy correct answers}}{\text{total relevant items}} = \frac{\text{True Positives}}{\text{True Positives + False Negatives}}$
     \item \textbf{F1-Score}: $F_1= 2*\frac{\text{precision*recall}}{\text{precision+recall}}$
     \item \textbf{NDCG} (Normalized Discounted Cumulitive Gain):\\
     Similar to a search engine, top few answers in a query matter more.
@@ -564,6 +578,8 @@ The ROC curve is a graphical plot that illustrates the diagnostic ability of a b
     \item The relationship between sensitivity and specificity. For example, a decrease in sensitivity results in an increase in specificity.
     \item Test accuracy; the closer the graph is to the top and left-hand borders, the more accurate the test. Likewise, the closer the graph to the diagonal, the less accurate the test. A perfect test would go straight from zero up the the top-left corner and then straight across the horizontal.
     \item The likelihood ratio; given by the derivative at any particular cutpoint.
+    \item \emph{False Positive Rate}: $\frac{\text{False Positives}}{\text{False Positives + True Negatives}}$\\
+    \emph{True Positive Rate}: $\frac{\text{True Positives}}{\text{True Positives + False Negatives}}$
 \end{itemize}
 \end{sectionbox}
 
