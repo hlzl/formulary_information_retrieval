@@ -61,7 +61,7 @@ Map an input vector to an output value and find a decision function that minimiz
     \item The aim of \textbf{local methods} is to find the best output $\hat{c}=argmin_{c\in\R}\mathbb{E}_{Y|X=x}L(Y,c)$, i.e. minimizes the expectation of loss on the distribution of $Y$ conditioned on known $X$ (only samples in region of interest).
     \item \textbf{Binary Decision Making} can be visualised via a Joint PDF of $X$ and $Y$, where $Y$ takes on -1 or 1 and $X$  is a continuous random variable whose distribution changes conditioned on $Y$.
     \item We can obtain the Expected Prediction Error and Expected Loss due to the assumption that we \emph{know the Joint PDF} of $X$ and $Y$, i.e. the stochastic behaviour of the system.
-    \item For local methods with loss specified as the squared loss, expected loss is found to be the conditional expectation of of $Y$ on the distribution of $Y$ conditioned on $X=x$: $f(X)=\mathbb{E}_{Y|X=x}[Y]$.
+    \item For local methods with loss specified as the squared loss, expected loss is found to be the conditional expectation of $Y$ on the distribution of $Y$ conditioned on $X=x$: $f(X)=\mathbb{E}_{Y|X=x}[Y]$.
     \item The problem with local methods is most of the time $X$ is a continuous random variable and thus values here $X=x$ are impossible, thus we take the \textbf{k-nearest neighbours} to $x$ as approximations of $x$. This gives us a set of samples representing the distribution of values $X=x$ such that local methods for finding the output can now be applied to these samples.
 \end{itemize}
 \end{sectionbox}
@@ -151,7 +151,10 @@ $ \frac{1}{n}\sum\limits_{i=1}^nL_{0,1}(y_i,f(x_i))$
         $Pr(Y=y|x)=\frac{1}{1+exp(-y(\mathbf{w}^{\top}\mathbf{x}+b))}$
     \end{center}
 \end{emphbox}
-Gradient-based methods can be used to find affine weights $\mathbf{w}$ and bias $b$ that solve the optimization problem (\emph{first box}).\\ Classify new sample: $sign(\mathbf{w}^{T}\mathbf{x}_{new}+b)$.
+\item Gradient-based methods can be used to find affine weights $\mathbf{w}$ and bias $b$ that solve the optimization problem (\emph{first box}).
+\item Classify new sample: $sign(\mathbf{w}^{T}\mathbf{x}_{new}+b)$.
+\item Decision boundary of LR is always a hyperplane (i.e. an affine space) in $\mathbb{R}^p$.
+\item Retraining with a new training sample affects the decision boundary.
 \end{itemize}
 
 \subsection{Overfitting on Logistic Regression}
@@ -174,9 +177,6 @@ $P(D|\mathbf{w})=\prod\limits_{i=1}^n\sigma(\mathbf{w}^{\top}\mathbf{x}_i)^{z_i}
 $L(\mathbf{w})=-log(P(D|\mathbf{w}))$, $\nabla_{\mathbf{w}}L(\mathbf{w})=\mathbf{X}(\sigma(\mathbf{X}^{\top}\mathbf{w})-\mathbf{z})$\\
 (Requires Hessian Matrix, which is positive semi-definite)\\
 Results are identical up to the factor 1/n
-\\
-\subsubsection{Proof}
-This is proven by noting that for a global minimum to exist, a point with small, positive loss exists (3.17) such that all points have losses greater than or equal to this point (3.16). This has to be satisfied along the linearly seperable constraint (3.18). If this constraint is always satisfied, then (3.19) is always positive, which when subbed into (3.15) and scaling weights and bias to infinity we find that the loss approaches zero (3.21), thus violating the global minimum condition (3.18). This is prevented via regularization (3.23).
 \end{sectionbox}
 
 \section{Kernel Method}
@@ -232,7 +232,7 @@ $s_{ij}$: $j$-th score for the $i$-th principal component
 \begin{itemize}
 \item Theorem 4.1 is proved by first reframing the minimization problem (4.2) into a maximization problem, reframing this again into a problem involving the trace of a rank k projection matrix, then noting that the maximum value along the diagonals is 1 (4.5) of which subbing in $U_k$ achieves due to its resulting in a identity matrix.
 We can show that the scores are uncorrelated by showing that the dot product between the scores and its transpose scaled by 1/n is a diagonal matrix using the SVD. (4.6)
-\item If we have the product between two matrices where the first matrix is is comprised of a diagonal matrix as well as a zero matrix, then we can get rid of the zero columns in the first matrix and also get rid of the corresponding rows in the left matrix.
+\item If we have the product between two matrices where the first matrix is comprised of a diagonal matrix as well as a zero matrix, then we can get rid of the zero columns in the first matrix and also get rid of the corresponding rows in the left matrix.
 \item A computationally inexpensive way of obtaining the scores using the singular values and right singular vector can be derived by substiuting the SVD into the formula for the calculating the scores. (4.7)
 \end{itemize}
 
@@ -304,7 +304,7 @@ $ \hat{\mathbf{L}}=\arg\min_{rank(\mathbf{L})}||\mathbf{X}-\mathbf{L}||_F=\mathb
 \end{itemize}
 Instead of replacing the inner product $\mathbf{x^{\top}y}$ by $\langle\phi(\mathbf{x}),\phi(\mathbf{y})\rangle$, we substitute $\mathbf{x^{\top}y}\rightarrow\kappa(\mathbf{x,y})$:
 \begin{emphbox}
-    $\mathbf{k}^{new}=\mat{kappa(\mathbf{x_1,y}) & \cdots & kappa(\mathbf{x_n,y})}^{\top}$\\
+    $\mathbf{k}^{new}=\mat{\kappa(\mathbf{x_1,y}) & \cdots & \kappa(\mathbf{x_n,y})}^{\top}$\\
     $\mathbf{k}_{cent}^{new}=\mathbf{Hk}_{}^{new}-\frac{1}{n}\mathbf{HK}\mathds{1}_n$
 \end{emphbox}
 \end{sectionbox}
@@ -329,7 +329,7 @@ Instead of replacing the inner product $\mathbf{x^{\top}y}$ by $\langle\phi(\mat
 	\begin{center}
 		$\mathbf{s}_new=\mathbf{\Sigma}_k^{-1}\mathbf{V}_k^{\top}\mathbf{k}_{cent}^{new}$\\
 	    $\mathbf{k}_{cent}^{new}=\mathbf{Hk}_{}^{new}-\frac{1}{n}\mathbf{HK}\mathds{1}_n$\\
-		$\mathbf{k}^{new}=\mat{kappa(\mathbf{x_1,y}) & \cdots & kappa(\mathbf{x_n,y})}^{\top}$
+		$\mathbf{k}^{new}=\mat{\kappa(\mathbf{x_1,y}) & \cdots & \kappa(\mathbf{x_n,y})}^{\top}$
 	\end{center}
 \end{cookbox}
 \end{sectionbox}
@@ -414,6 +414,8 @@ Idea: Find hyperplane to divide $x, y$ into two subspaces
 \end{emphbox}
 \item The decision perspective can be imagined as the perspective where classification decisions are made, all depending on the decision distance.
 \item The positive margin is defined as the hyperplane with a decision distance of 1 (8.8), and the negative margin is defined as the hyperplane with a decision distance of -1 (8.9).
+\item Decision boundary of SVM is always a hyperplane (i.e. an affine space) in $\mathbb{R}^p$.
+\item Retraining with a new training sample affects the decision boundary.
 \end{itemize}
 
 \subsection{Basic Linear SVM}
@@ -454,7 +456,7 @@ Idea: Find hyperplane to divide $x, y$ into two subspaces
 
 \subsection{Linear SVM via Lagrangian Duality}
 \begin{itemize}
-\item SVM via Lagrangian duality follows the process specified above. The original problem is as in (8.14), the Lagrangian primal is as in (8.23 to 8.25) and the KKT conditions are as in (8.26 to 8.29). 
+\item SVM via Lagrangian duality follows the process specified above. The original problem is as in (8.14), the Lagrangian primal is as in (8.23 to 8.25) and the KKT conditions are as in (8.17 to 8.21). 
 \begin{emphbox}
     Problem: $\min\limits_{\mathbf{w}, b, \mathbf{\lambda}\ge0} L(\mathbf{w}, b, \mathbf{\lambda})$ \\  $L(\mathbf{w}, b, \mathbf{\lambda})= \frac{1}{2}||\mathbf{w}||^2 - \sum\limits_i \lambda_i y_i(\mathbf{w^{\top}x_i}-b)+\lambda_i $ (8.25)\\
     		$\nabla_{(\mathbf{w},b)}L(\mathbf{w}, b, \mathbf{\lambda})=\mat{\mathbf{w}-\sum_i\lambda_iy_i\mathbf{x}_i \\ \sum_i \lambda_iy_i}$\\
@@ -556,8 +558,10 @@ Given a prediction table, eg:
     \end{cookbox}
 \begin{sectionbox}
 \subsection{Classification Analysis}
-\emph{False Positive}: Indicates presence of a condition, but actually not present.
+\emph{False Positive}: Indicates presence of a condition during a test, but condition is actually \textbf{not} present.\\
 \emph{False Negative}: Indicates \textbf{no} presence of a condition, actually \textbf{is} present.
+\emph{True Positive}: Indicates presence of a condition, actually \textbf{is} present.\\
+\emph{True Negative}: Indicates \textbf{no} presence of a condition, actually \textbf{not} present.
 \begin{center}
 	\includegraphics[width = 1.0\columnwidth]{figures/precession_recall.png}
 \end{center}
@@ -630,17 +634,14 @@ Assuming that $\mathbf{X} \in \mathbb{R}^{p \times N}$ is the centered data matr
 where $\epsilon$ is usually chosen to be between 0.01 and 0.2. Energy is not always the best way to measure useful information, e.g. when images differ in brightness (=No use full information)
 \end{sectionbox}
 
-\begin{center}
-	    \includegraphics[width = 0.9\columnwidth]{figures/error_if_removed.png}
-	\end{center}
-\begin{center}
-	    \includegraphics[width = 0.7\columnwidth]{figures/PCA_case1.png}
-	\end{center}
-\begin{center}
-	    \includegraphics[width = 0.7\columnwidth]{figures/PCA_case2.png}
-	\end{center}
-\begin{center}
-	    \includegraphics[width = 0.7\columnwidth]{figures/PCA_case3.png}#
-	\end{center}
+\begin{sectionbox}
+\subsection{Exam Winter Term 18/19}
+The questions where completely different to what was discussed in the lecture, the assignments and the tutorial. They focused on logical thinking and simple calculations. Questions had a structure like such:\\
+"These six different $x_i$ and $y_i$ are given. Which of the following $\mathbf{w}$ and $\lambda$ are correct?"\\
+$\rightarrow$ Solution: Use the KKT Conditions with each possible $\mathbf{w}^*$ and $\lambda^*$ to see which one has a plausible solution.\\
+"Which of the following could (not) be a Kernel function?"\\
+$\rightarrow$ Solution: Check is $K$ is positive semidefinite, if $\kappa$ is symmetric etc.\\
+Most questions could be solved by using the method of elimination and almost all the time the information necessary to solve the question was in the description of the question (\textit{e.g. they stated the KKT Conditions}).
+\end{sectionbox}
 % DOCUMENT_END =================================================================
 \end{document}
